@@ -1,0 +1,461 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>配送小生意 · 小程序界面原型</title>
+<style>
+  :root{
+    --ink:#1f2328; --ink-2:#57606a; --ink-3:#8b949e;
+    --page:#eef0f3; --surface:#ffffff; --line:#e4e7eb;
+    --primary:#0d6e5f; --primary-ink:#ffffff;
+    --good:#15803d; --good-bg:#e8f5ec;
+    --warn:#b45309; --warn-bg:#fdf3e3;
+    --bad:#b91c1c;  --bad-bg:#fdeaea;
+    --info:#1d4ed8; --info-bg:#e8eefc;
+    --wx:#07c160;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);color:var(--ink);
+       font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+       padding:32px 20px 60px;}
+  .wrap{max-width:1280px;margin:0 auto}
+  h1{font-size:26px;margin-bottom:6px}
+  .sub{color:var(--ink-2);font-size:15px;margin-bottom:14px}
+  .rules{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
+  .rule{background:var(--surface);border:1px solid var(--line);border-radius:999px;
+        padding:7px 14px;font-size:13.5px;color:var(--ink-2)}
+  .rule b{color:var(--primary)}
+  h2{font-size:19px;margin:38px 0 4px;padding-left:10px;border-left:4px solid var(--primary)}
+  .secnote{color:var(--ink-2);font-size:13.5px;margin:0 0 16px 14px}
+  .row{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}
+
+  /* ---------- 手机框 ---------- */
+  .phone{width:340px;background:#111;border-radius:34px;padding:10px;flex:none;
+         box-shadow:0 10px 28px rgba(0,0,0,.16)}
+  .cap{color:var(--ink-2);font-size:13px;text-align:center;margin-top:10px}
+  .scr{background:#f6f7f8;border-radius:26px;overflow:hidden;display:flex;flex-direction:column;
+       min-height:640px}
+  .sbar{display:flex;justify-content:space-between;padding:8px 18px 4px;font-size:12px;color:var(--ink-2);background:transparent}
+  .abar{padding:8px 16px 12px;font-size:18px;font-weight:700}
+  .abar small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-2);margin-top:2px}
+  .body{flex:1;padding:0 12px 12px;display:flex;flex-direction:column;gap:10px}
+
+  /* ---------- 通用元件 ---------- */
+  .card{background:var(--surface);border-radius:14px;padding:14px;border:1px solid var(--line)}
+  .btn{display:block;width:100%;text-align:center;border-radius:14px;padding:15px 10px;
+       font-size:18px;font-weight:700;border:0}
+  .btn-primary{background:var(--primary);color:var(--primary-ink)}
+  .btn-wx{background:var(--wx);color:#fff}
+  .btn-ghost{background:transparent;color:var(--ink-2);font-size:15px;font-weight:400;padding:10px}
+  .btn[disabled]{background:#c8cdd3;color:#fff}
+  .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;
+         padding:3px 10px;font-size:12.5px;font-weight:600}
+  .b-good{background:var(--good-bg);color:var(--good)}
+  .b-warn{background:var(--warn-bg);color:var(--warn)}
+  .b-bad{background:var(--bad-bg);color:var(--bad)}
+  .b-info{background:var(--info-bg);color:var(--info)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .corner{position:absolute;top:-7px;right:-7px;background:var(--bad);color:#fff;font-size:12px;
+          min-width:22px;height:22px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+          padding:0 5px;font-weight:700}
+
+  /* 首页 KPI */
+  .kpis{display:flex;flex-direction:column;gap:10px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 16px;
+       display:flex;justify-content:space-between;align-items:baseline}
+  .kpi .lbl{font-size:15.5px;color:var(--ink-2)}
+  .kpi .val{font-size:30px;font-weight:800;letter-spacing:-.5px}
+  .kpi .val.money-in{color:var(--good)}
+  .kpi .note{font-size:12.5px;color:var(--bad);font-weight:600}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tile{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+        padding:16px 12px;text-align:center;font-size:16.5px;font-weight:700}
+  .tile small{display:block;font-weight:400;font-size:12px;color:var(--ink-3);margin-top:4px}
+  .tabbar{display:flex;border-top:1px solid var(--line);background:var(--surface)}
+  .tabbar div{flex:1;text-align:center;padding:10px 0 12px;font-size:12.5px;color:var(--ink-3)}
+  .tabbar div.on{color:var(--primary);font-weight:700}
+  .tabbar i{display:block;font-style:normal;font-size:19px;margin-bottom:2px}
+
+  /* 表格行 */
+  .itemrow{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;
+           border-bottom:1px solid var(--line);font-size:16px}
+  .itemrow:last-child{border-bottom:0}
+  .itemrow .spec{color:var(--ink-3);font-size:12.5px;display:block;margin-top:2px}
+  .itemrow.err{background:var(--bad-bg);border-radius:10px;padding:11px 10px;border-bottom:0;
+               outline:1.5px dashed var(--bad)}
+  .itemrow.err .why{color:var(--bad);font-size:12.5px;font-weight:600;display:block;margin-top:2px}
+  .voice{display:flex;align-items:center;gap:9px;background:var(--info-bg);border-radius:12px;
+         padding:10px 12px;font-size:14px;color:var(--info);font-weight:600}
+  .quote{font-size:13.5px;color:var(--ink-2);background:#f2f3f5;border-radius:10px;padding:9px 11px}
+
+  /* 列表(客户/路线) */
+  .lrow{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+        display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .lrow .nm{font-size:16.5px;font-weight:700}
+  .lrow .meta{font-size:12.5px;color:var(--ink-2);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .lrow .amt{font-size:19px;font-weight:800;text-align:right}
+  .mini{border:0;border-radius:10px;padding:8px 13px;font-size:14px;font-weight:700;flex:none}
+  .m-primary{background:var(--primary);color:#fff}
+  .m-line{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+
+  /* 微信聊天 */
+  .chat{background:#ececec;flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:88%;}
+  .msg .from{font-size:11px;color:var(--ink-3);margin:0 0 3px 6px}
+  .bubble{background:#fff;border-radius:4px 12px 12px 12px;padding:10px 12px;font-size:14.5px}
+  .msg.me{align-self:flex-end}
+  .msg.me .bubble{background:#95ec69;border-radius:12px 4px 12px 12px}
+  .wxcard{background:#fff;border-radius:12px;padding:13px;width:100%;border:1px solid var(--line)}
+  .wxcard .t{font-size:15.5px;font-weight:700;display:flex;gap:6px;align-items:center}
+  .wxcard .kv{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .wxcard .kv:last-of-type{border-bottom:0}
+  .wxcard .kv b{font-size:16px}
+  .wxcard .src{font-size:11px;color:var(--ink-3);border-top:1px solid var(--line);margin-top:9px;padding-top:7px}
+
+  /* 相机 */
+  .cam{flex:1;background:#23272d;border-radius:14px;display:flex;flex-direction:column;
+       align-items:center;justify-content:center;gap:12px;color:#cdd3da;padding:18px;text-align:center}
+  .frame{width:82%;aspect-ratio:0.72;border:2px dashed #9aa4af;border-radius:8px;display:flex;
+         flex-direction:column;justify-content:space-between;padding:12px;color:#9aa4af;font-size:12px}
+  .sig{align-self:flex-end;font-family:cursive;font-size:16px;color:#e8edf2}
+  .shutter{width:62px;height:62px;border-radius:50%;background:#fff;border:5px solid #b9c0c8;margin:10px auto 2px}
+  .auto3{font-size:13.5px;line-height:1.9}
+  .auto3 b{color:var(--good)}
+
+  /* 模板 chips */
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;
+        padding:6px 13px;font-size:13.5px;color:var(--ink-2)}
+  .chip.on{border-color:var(--primary);color:var(--primary);font-weight:700;background:#eaf3f1}
+
+  .foot{margin-top:44px;color:var(--ink-2);font-size:13px;line-height:2}
+  .foot b{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <h1>配送小生意 · 小程序界面原型</h1>
+  <p class="sub">老板端 / 配送员端 / 客户端(微信内,零安装) · 行业模板可扩展 —— 配套设计规格见《design/01-交互设计详案.md》</p>
+  <div class="rules">
+    <span class="rule"><b>铁律一</b> 语音优先,转写后必出确认卡片</span>
+    <span class="rule"><b>铁律二</b> 高频动作 1 步,完整业务 ≤3 步</span>
+    <span class="rule"><b>铁律三</b> 对账等全自动,人只做确认和例外</span>
+    <span class="rule">正文 ≥17px · 主按钮高 ≥52px · 状态色永远带文字</span>
+  </div>
+
+  <!-- ================= 老板端 ================= -->
+  <h2>老板端(小程序)</h2>
+  <p class="secnote">首页只放三个数字四个按钮;所有高频动作 1 步完成。</p>
+  <div class="row">
+
+    <!-- 1 首页 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>9:41</span><span>●●●● 4G</span></div>
+        <div class="abar">中山店铺 <small>7月31日 周五 · 调味粮油版</small></div>
+        <div class="body">
+          <div class="kpis">
+            <div class="kpi"><span class="lbl">今天收的钱</span><span class="val money-in">¥1,860</span></div>
+            <div class="kpi"><span class="lbl">外面欠的钱</span>
+              <span style="text-align:right"><span class="val">¥23,450</span><br><span class="note">3 家欠超 30 天</span></span></div>
+            <div class="kpi"><span class="lbl">明早要送</span><span class="val">12 家</span></div>
+          </div>
+          <div class="grid2">
+            <div class="tile">待确认订单<small>点开逐单确认</small><span class="corner">3</span></div>
+            <div class="tile">生成采购汇总单<small>按摊位排好顺序</small></div>
+            <div class="tile">今日配送<small>12 家 · 1号线</small></div>
+            <div class="tile">该催的账<small>超 30 天的在这</small><span class="corner">2</span></div>
+          </div>
+          <div class="card" style="font-size:13px;color:var(--ink-2)">
+            昨晚日报:送货 14 家 ¥4,120,收款 ¥1,860,新欠 ¥2,260。
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="on"><i>🏠</i>今日</div><div><i>👥</i>客户</div><div><i>💰</i>账</div><div><i>⚙️</i>我的</div>
+        </div>
+      </div></div>
+      <p class="cap">1. 首页仪表盘 —— 三个数字 + 四个按钮</p>
+    </div>
+
+    <!-- 2 订单确认 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>9:41</span><span>●●●● 4G</span></div>
+        <div class="abar">待确认订单(3)<small>机器转好了,你扫一眼就行</small></div>
+        <div class="body">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <b style="font-size:17px">老王饺子馆</b><span style="font-size:12px;color:var(--ink-3)">昨晚 21:47 · 微信语音</span>
+            </div>
+            <div class="voice" style="margin:9px 0 7px">▶ 播放原语音 0:12</div>
+            <div class="quote">"明天来两桶酱油,一件醋,再拿点花椒"</div>
+            <div style="margin-top:6px">
+              <div class="itemrow"><span>黄豆酱油<span class="spec">10L/桶 · ¥55</span></span><b>× 2 桶</b></div>
+              <div class="itemrow"><span>老陈醋<span class="spec">420ml×15瓶/件 · ¥35</span></span><b>× 1 件</b></div>
+              <div class="itemrow err"><span>花椒<span class="spec">500g/袋 · ¥30</span><span class="why">"拿点"没听清数量 —— 点这里填</span></span><b style="color:var(--bad)">× ?</b></div>
+            </div>
+            <p style="font-size:12px;color:var(--ink-3);margin:8px 0 10px">点任意一格可以改;改完红色消失才能确认。</p>
+            <button class="btn btn-primary" disabled>确认下单并回复客户</button>
+            <button class="btn btn-ghost">拿不准?给客户回条语音问一句</button>
+          </div>
+        </div>
+      </div></div>
+      <p class="cap">2. 订单确认卡片 —— 转写标红,老板只点一下</p>
+    </div>
+
+    <!-- 3 采购汇总 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>5:12</span><span>●●●● 4G</span></div>
+        <div class="abar">今晨采购汇总单<small>22 个订单已汇总 · 已扣掉库存</small></div>
+        <div class="body">
+          <div class="card">
+            <b style="color:var(--primary)">A区 · 调味 —— 王记(12号摊)</b>
+            <div class="itemrow"><span>黄豆酱油 10L/桶</span><span><b>4 桶</b> ☑</span></div>
+            <div class="itemrow"><span>老陈醋 420ml×15/件</span><span><b>2 件</b> ☐</span></div>
+          </div>
+          <div class="card">
+            <b style="color:var(--primary)">B区 · 干货 —— 李记(3号摊)</b>
+            <div class="itemrow"><span>花椒 500g/袋</span><span><b>6 袋</b> ☐</span></div>
+          </div>
+          <div class="card">
+            <b style="color:var(--primary)">C区 · 粮油 —— 张记(1号摊)</b>
+            <div class="itemrow"><span>大豆油 20L/桶</span><span><b>3 桶</b> ☑</span></div>
+          </div>
+          <div class="card" style="display:flex;justify-content:space-between;font-size:15px">
+            <span>预算合计(示例)</span><b>¥1,238</b>
+          </div>
+          <button class="btn btn-primary">按摊位顺序走一圈</button>
+        </div>
+      </div></div>
+      <p class="cap">3. 采购汇总单 —— 1 步生成,按摊位分区</p>
+    </div>
+
+    <!-- 4 客户账页 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>20:05</span><span>●●●● 4G</span></div>
+        <div class="abar">账<small>按欠款从多到少排 · 颜色=欠了多久</small></div>
+        <div class="body">
+          <div class="card" style="display:flex;justify-content:space-between;font-size:15px">
+            <span>外面欠款合计</span><b style="font-size:20px">¥23,450</b>
+          </div>
+          <div class="lrow">
+            <div><div class="nm">学苑食堂3号档口</div>
+              <div class="meta"><span class="badge b-good"><span class="dot" style="background:var(--good)"></span>欠 12 天 · 月结正常</span></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+              <span class="amt">¥8,120</span><button class="mini m-line">发对账单</button></div>
+          </div>
+          <div class="lrow">
+            <div><div class="nm">老王饺子馆</div>
+              <div class="meta"><span class="badge b-warn"><span class="dot" style="background:var(--warn)"></span>欠 38 天 · 该催了</span></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+              <span class="amt">¥3,450</span><button class="mini m-primary">发催款提醒</button></div>
+          </div>
+          <div class="lrow" style="outline:1.5px solid var(--bad)">
+            <div><div class="nm">红星烧烤</div>
+              <div class="meta"><span class="badge b-bad"><span class="dot" style="background:var(--bad)"></span>欠 65 天 · 已停赊</span></div></div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+              <span class="amt" style="color:var(--bad)">¥2,750</span><button class="mini m-primary">发催款提醒</button></div>
+          </div>
+          <p style="font-size:12px;color:var(--ink-3)">催款以门店名义发一条客气的模板消息,发不发你说了算。</p>
+        </div>
+        <div class="tabbar">
+          <div><i>🏠</i>今日</div><div><i>👥</i>客户</div><div class="on"><i>💰</i>账</div><div><i>⚙️</i>我的</div>
+        </div>
+      </div></div>
+      <p class="cap">4. 客户账页 —— 账龄三色,催款 1 步</p>
+    </div>
+  </div>
+
+  <!-- ================= 配送员端 ================= -->
+  <h2>配送员端(同一小程序,配送员角色)</h2>
+  <p class="secnote">配送员只有两个动作:点导航、拍回执。别的都不给他。</p>
+  <div class="row">
+
+    <!-- 5 路线 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>7:26</span><span>●●●● 4G</span></div>
+        <div class="abar">今日配送 · 1号线(城东)<small>12 家 · 按顺路排好,照着送</small></div>
+        <div class="body">
+          <div class="lrow">
+            <div><div class="nm">① 学苑食堂3号档口</div>
+              <div class="meta">大学城食堂一楼 · 5件 <span class="badge b-good">✓ 已送达 7:58</span></div></div>
+            <button class="mini m-line">导航</button>
+          </div>
+          <div class="lrow" style="outline:1.5px solid var(--primary)">
+            <div><div class="nm">② 老王饺子馆</div>
+              <div class="meta">中山路45号 · 3件 <span class="badge b-warn">现结 ¥145</span></div></div>
+            <button class="mini m-primary">导航</button>
+          </div>
+          <div class="lrow">
+            <div><div class="nm">③ 红星烧烤</div>
+              <div class="meta">建设街12号 · 2件 <span class="badge b-info">收货时间 下午4点前</span></div></div>
+            <button class="mini m-line">导航</button>
+          </div>
+          <div class="card" style="font-size:13.5px;color:var(--ink-2)">
+            规矩就一条:<b style="color:var(--ink)">送完每家,拍一张签好字的回执。</b>现结先请客户扫车上的门店收款码。
+          </div>
+        </div>
+      </div></div>
+      <p class="cap">5. 今日路线 —— 列表即任务,一键导航</p>
+    </div>
+
+    <!-- 6 拍照回执 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>8:14</span><span>●●●● 4G</span></div>
+        <div class="abar">老王饺子馆 · 拍回执<small>对准签好字的回执,拍一张就行</small></div>
+        <div class="body">
+          <div class="cam">
+            <div class="frame">
+              <span>送货回执单 HZ20260731-02</span>
+              <span>黄豆酱油×2桶 老陈醋×1件 花椒×2袋<br>合计 ¥205</span>
+              <span class="sig">收货人:小李 ✓</span>
+            </div>
+            <div>拍下这一张,系统自动做三件事</div>
+            <div class="shutter"></div>
+          </div>
+          <div class="card auto3">
+            <b>✓</b> 这 ¥205 挂到老王饺子馆的账上<br>
+            <b>✓</b> 照片存进他家的凭证册<br>
+            <b>✓</b> 王老板微信马上收到电子回执
+          </div>
+        </div>
+      </div></div>
+      <p class="cap">6. 拍照回执 —— 拍一张,三件事自动完成</p>
+    </div>
+  </div>
+
+  <!-- ================= 客户端 ================= -->
+  <h2>客户端 = 饭店老板的微信(零安装、零注册)</h2>
+  <p class="secnote">客户只有三个动作:发语音下单、看电子回执、月底点一下确认。</p>
+  <div class="row">
+
+    <!-- 7 电子回执 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>8:15</span><span>●●●● 4G</span></div>
+        <div class="abar" style="font-size:16px">中山店铺 · 张老板</div>
+        <div class="chat">
+          <div class="msg"><div class="from">中山店铺</div>
+            <div class="wxcard">
+              <div class="t">📄 送货回执 · HZ20260731-02</div>
+              <div class="kv"><span>今日送货</span><b>3 项 · ¥205</b></div>
+              <div class="kv"><span>收货人</span><b>小李 · 8:14</b></div>
+              <div class="src">点开看明细和签字回执照片 ▸</div>
+            </div></div>
+          <div class="msg me"><div class="bubble">收到,辛苦</div></div>
+          <div class="msg"><div class="from">中山店铺</div>
+            <div class="bubble" style="font-size:13.5px;color:var(--ink-2)">王哥,您不在店里也看得见:小李签收的,品名数量单价都在单上,月底对账一对就清。</div></div>
+        </div>
+      </div></div>
+      <p class="cap">7. 电子回执卡片 —— 员工代收,老板实时知道</p>
+    </div>
+
+    <!-- 8 月度对账 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>9:00</span><span>●●●● 4G</span></div>
+        <div class="abar" style="font-size:16px">中山店铺 · 张老板</div>
+        <div class="chat">
+          <div class="msg"><div class="from">中山店铺 · 8月1日 9:00 自动发送</div>
+            <div class="wxcard">
+              <div class="t">🧾 7月对账单 · 老王饺子馆</div>
+              <div class="kv"><span>上月结转</span><b>¥1,200</b></div>
+              <div class="kv"><span>本月送货(23单)</span><b>¥6,890</b></div>
+              <div class="kv"><span>本月已付</span><b>¥5,000</b></div>
+              <div class="kv"><span>月底应结</span><b style="color:var(--bad)">¥3,090</b></div>
+              <button class="btn btn-wx" style="margin-top:10px;font-size:16px;padding:12px">确认无误</button>
+              <button class="btn btn-ghost" style="font-size:13.5px">有异议?逐笔看</button>
+              <div class="src">每一笔都对得上您手里的回执单客户联</div>
+            </div></div>
+        </div>
+      </div></div>
+      <p class="cap">8. 月度对账卡片 —— 客户 1 步确认,对账完成</p>
+    </div>
+
+    <!-- 9 异议追溯 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>9:03</span><span>●●●● 4G</span></div>
+        <div class="abar" style="font-size:16px">7月送货 23 笔<small>点哪笔看哪笔的签字回执</small></div>
+        <div class="body">
+          <div class="lrow"><div><div class="nm" style="font-size:15px">7月12日 · HZ20260712-03</div>
+            <div class="meta">¥345 · 收货人:小李</div></div><button class="mini m-line">看回执</button></div>
+          <div class="card" style="border:1.5px solid var(--primary)">
+            <div style="background:#f2f3f5;border-radius:10px;padding:12px;font-size:12.5px;color:var(--ink-2)">
+              <b style="color:var(--ink)">回执照片 · HZ20260712-03</b><br>
+              大豆油×2桶 ¥260 / 花椒×2袋 ¥60 / 陈醋…<br>
+              合计 ¥345 <span class="sig" style="font-size:15px;color:var(--ink)">收货人:小李 ✓ 11:20</span>
+            </div>
+            <p style="font-size:12.5px;color:var(--ink-2);margin-top:8px">单号、签字、时间齐全 —— 一般看到这就认了。</p>
+          </div>
+          <div class="lrow"><div><div class="nm" style="font-size:15px">7月15日 · HZ20260715-01</div>
+            <div class="meta">¥520 · 收货人:王建国</div></div><button class="mini m-line">看回执</button></div>
+        </div>
+      </div></div>
+      <p class="cap">9. 异议追溯 —— 点一笔,弹出当天签字回执</p>
+    </div>
+  </div>
+
+  <!-- ================= 行业模板 ================= -->
+  <h2>行业模板 = 可扩展性(同一套系统,换个配置包)</h2>
+  <p class="secnote">调味粮油只是基准版。换成海鲜:多出"日牌价 + 下单量/实称量 + 复秤"——配置打开即可,不改代码。详见《design/03-可扩展性与行业模板.md》。</p>
+  <div class="row">
+
+    <!-- 10 海鲜下单 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>6:02</span><span>●●●● 4G</span></div>
+        <div class="abar">待确认订单<small>海鲜水产版 · 今日牌价已生效</small></div>
+        <div class="body">
+          <div class="chips">
+            <span class="chip">调味粮油</span><span class="chip on">海鲜水产</span>
+            <span class="chip">蔬菜配送</span><span class="chip">冻品</span>
+          </div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <b style="font-size:17px">聚福楼酒店 · 后厨</b><span style="font-size:12px;color:var(--ink-3)">今晨 5:40 · 语音</span>
+            </div>
+            <div class="quote" style="margin:8px 0 6px">"梭子蟹来三斤,基围虾两斤,要活的"</div>
+            <div class="itemrow"><span>梭子蟹(活)<span class="spec">今日牌价 ¥58/斤 <span class="badge b-info">以实称为准</span></span></span>
+              <span style="text-align:right"><b>下单 3 斤</b><br><small style="color:var(--ink-2)">实称 2.8 斤 = ¥162.4</small></span></div>
+            <div class="itemrow"><span>基围虾(活)<span class="spec">今日牌价 ¥45/斤 <span class="badge b-info">以实称为准</span></span></span>
+              <span style="text-align:right"><b>下单 2 斤</b><br><small style="color:var(--ink-2)">实称 2.05 斤 = ¥92.3</small></span></div>
+            <p style="font-size:12px;color:var(--ink-3);margin:8px 0 10px">送达时当面复秤,回执上"下单量/实称量"两栏都有,按实称结算。</p>
+            <button class="btn btn-primary">按实称确认 · 共 ¥254.7</button>
+          </div>
+        </div>
+      </div></div>
+      <p class="cap">10. 海鲜模式订单 —— 双数量 + 日牌价 + 复秤</p>
+    </div>
+
+    <!-- 11 今日牌价 -->
+    <div>
+      <div class="phone"><div class="scr">
+        <div class="sbar"><span>5:55</span><span>●●●● 4G</span></div>
+        <div class="abar" style="font-size:16px">中山水产 · 客户群</div>
+        <div class="chat">
+          <div class="msg"><div class="from">中山水产 · 每晨 6:00 自动群发</div>
+            <div class="wxcard">
+              <div class="t">🐟 8月1日 今日牌价</div>
+              <div class="kv"><span>梭子蟹(活)</span><b>¥58/斤 <span class="badge b-bad">比昨天 +2</span></b></div>
+              <div class="kv"><span>基围虾(活)</span><b>¥45/斤 <span class="badge b-good">持平</span></b></div>
+              <div class="kv"><span>花蛤</span><b>¥8/斤 <span class="badge b-good">比昨天 −1</span></b></div>
+              <div class="src">直接回语音下单,今天的单按今天的价结算</div>
+            </div></div>
+          <div class="msg me"><div class="bubble">梭子蟹三斤,虾两斤</div></div>
+        </div>
+      </div></div>
+      <p class="cap">11. 今日牌价卡片 —— 海鲜/蔬菜模板的每日开关</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>设计基线</b>:手机内正文 ≥17px、KPI 数字 30px;主按钮高 ≥52px 且位于拇指区;
+    状态色只用三档(<span style="color:var(--good);font-weight:700">绿=正常/收到钱</span> ·
+    <span style="color:var(--warn);font-weight:700">黄=该处理了</span> ·
+    <span style="color:var(--bad);font-weight:700">红=超期/停赊</span>)且永远带文字,不靠颜色单独传达;
+    每屏只干一件事;任何自动生成之物发出前都有人工确认点。<br>
+    界面词表(节选):应收账款→欠款 · 核销→销账 · 账龄→欠了多久 · SKU→货 · 低于安全库存→该补货了。全表见《design/01-交互设计详案.md》。
+  </div>
+</div>
