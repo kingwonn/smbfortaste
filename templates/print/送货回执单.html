@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中山店铺 送货回执单(A4打印版)</title>
+<style>
+  /* ===== 基础 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", serif;
+    color: #000;
+    background: #f2f2f2;
+  }
+
+  /* ===== 屏幕预览:模拟一张A4纸 ===== */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 6mm auto;
+    padding: 8mm 12mm;
+    background: #fff;
+    box-shadow: 0 0 4mm rgba(0,0,0,.25);
+  }
+
+  /* ===== 顶部不打印的使用说明条 ===== */
+  .no-print {
+    width: 210mm;
+    margin: 4mm auto 0;
+    padding: 3mm 5mm;
+    background: #fff;
+    border: 1px dashed #000;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+  .no-print b { font-size: 11pt; }
+
+  /* ===== 单联(上下两联结构相同) ===== */
+  .slip { padding: 2mm 0 1mm; }
+
+  .slip-head {
+    position: relative;
+    text-align: center;
+    margin-bottom: 2.5mm;
+  }
+  .slip-title {
+    font-size: 16pt;
+    font-weight: bold;
+    letter-spacing: 2pt;
+  }
+  .copy-tag {
+    position: absolute;
+    right: 0;
+    top: 1mm;
+    font-size: 11pt;
+    font-weight: bold;
+    border: 1pt solid #000;
+    padding: 0.8mm 2mm;
+  }
+
+  .info-row {
+    display: flex;
+    font-size: 11pt;
+    line-height: 1.7;
+    margin-bottom: 1mm;
+  }
+  .info-row .item { white-space: nowrap; }
+  .info-row .grow { flex: 1; }
+  .blank {
+    display: inline-block;
+    border-bottom: 0.35mm solid #000;
+    min-width: 30mm;
+  }
+  .blank.w-long { min-width: 62mm; }
+  .blank.w-mid  { min-width: 40mm; }
+
+  /* ===== 明细表 ===== */
+  table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 1.5mm 0 2mm;
+  }
+  table.detail th, table.detail td {
+    border: 0.35mm solid #000;
+    font-size: 11pt;
+    padding: 0 1.5mm;
+    height: 7.2mm;
+    text-align: center;
+    overflow: hidden;
+  }
+  table.detail th { font-weight: bold; }
+  table.detail col.c-name  { width: 34%; }
+  table.detail col.c-spec  { width: 16%; }
+  table.detail col.c-qty   { width: 10%; }
+  table.detail col.c-unit  { width: 10%; }
+  table.detail col.c-price { width: 14%; }
+  table.detail col.c-amt   { width: 16%; }
+  table.detail td.total-label {
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .sign-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11pt;
+    line-height: 1.7;
+    margin-bottom: 1.5mm;
+  }
+  .sign-row .blank { min-width: 26mm; }
+
+  .foot-note {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    border-top: 0.25mm solid #000;
+    padding-top: 1.2mm;
+  }
+
+  /* ===== 中间裁切线 ===== */
+  .cutline {
+    display: flex;
+    align-items: center;
+    height: 9mm;
+    font-size: 10pt;
+    color: #000;
+  }
+  .cutline .line {
+    flex: 1;
+    border-top: 0.4mm dashed #000;
+  }
+  .cutline .scissors {
+    padding: 0 2mm;
+    font-size: 12pt;
+  }
+  .cutline .hint {
+    padding-right: 2mm;
+    white-space: nowrap;
+  }
+
+  /* ===== 打印样式 ===== */
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    html, body { background: #fff; }
+    .no-print { display: none !important; }
+    .page {
+      width: 210mm;
+      min-height: 0;
+      margin: 0;
+      padding: 8mm 12mm;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="no-print">
+    <b>使用说明(此条不会被打印):</b>日常打印本页即可;长期使用建议拿此版式到打印店定制无碳复写三联单(第③联 存根联),几分钱一张。
+    打印后沿中间虚线裁开:上联给客户留存,下联(对账联)收回带走,月底做对账单时逐张核对。
+  </div>
+
+  <div class="page">
+
+    <!-- ===================== 第①联 客户联 ===================== -->
+    <section class="slip">
+      <div class="slip-head">
+        <div class="slip-title">中山店铺 送货回执单</div>
+        <div class="copy-tag">第①联 客户联</div>
+      </div>
+
+      <div class="info-row">
+        <span class="item">单号:HZ<span class="blank w-mid">&nbsp;</span></span>
+        <span class="grow"></span>
+        <span class="item">日期:<span class="blank">&nbsp;</span>年<span class="blank" style="min-width:10mm">&nbsp;</span>月<span class="blank" style="min-width:10mm">&nbsp;</span>日</span>
+      </div>
+      <div class="info-row">
+        <span class="item">客户店名:<span class="blank w-mid">&nbsp;</span></span>
+        <span class="grow"></span>
+        <span class="item">地址:<span class="blank w-long">&nbsp;</span></span>
+      </div>
+
+      <table class="detail">
+        <colgroup>
+          <col class="c-name"><col class="c-spec"><col class="c-qty">
+          <col class="c-unit"><col class="c-price"><col class="c-amt">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>品名</th><th>规格</th><th>数量</th><th>单位</th><th>单价(元)</th><th>金额(元)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr>
+            <td class="total-label" colspan="4">合计金额(大写):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;元整</td>
+            <td class="total-label" colspan="2">(小写)¥</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sign-row">
+        <span>送货人签字:<span class="blank">&nbsp;</span></span>
+        <span>收货人签字:<span class="blank">&nbsp;</span></span>
+        <span>收货时间:<span class="blank" style="min-width:12mm">&nbsp;</span>时<span class="blank" style="min-width:12mm">&nbsp;</span>分</span>
+      </div>
+
+      <div class="foot-note">请收货人核对品名数量后签字;单价金额供店主对账使用。本单为结算凭证,请妥善保存。(本单一式三联:第①联客户联、第②联对账联、第③联存根联)</div>
+    </section>
+
+    <!-- ===================== 裁切线 ===================== -->
+    <div class="cutline">
+      <span class="scissors">&#9986;</span>
+      <span class="hint">沿虚线裁开:上联交客户,下联收回对账</span>
+      <span class="line"></span>
+      <span class="scissors">&#9986;</span>
+    </div>
+
+    <!-- ===================== 第②联 对账联 ===================== -->
+    <section class="slip">
+      <div class="slip-head">
+        <div class="slip-title">中山店铺 送货回执单</div>
+        <div class="copy-tag">第②联 对账联</div>
+      </div>
+
+      <div class="info-row">
+        <span class="item">单号:HZ<span class="blank w-mid">&nbsp;</span></span>
+        <span class="grow"></span>
+        <span class="item">日期:<span class="blank">&nbsp;</span>年<span class="blank" style="min-width:10mm">&nbsp;</span>月<span class="blank" style="min-width:10mm">&nbsp;</span>日</span>
+      </div>
+      <div class="info-row">
+        <span class="item">客户店名:<span class="blank w-mid">&nbsp;</span></span>
+        <span class="grow"></span>
+        <span class="item">地址:<span class="blank w-long">&nbsp;</span></span>
+      </div>
+
+      <table class="detail">
+        <colgroup>
+          <col class="c-name"><col class="c-spec"><col class="c-qty">
+          <col class="c-unit"><col class="c-price"><col class="c-amt">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>品名</th><th>规格</th><th>数量</th><th>单位</th><th>单价(元)</th><th>金额(元)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr>
+            <td class="total-label" colspan="4">合计金额(大写):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;元整</td>
+            <td class="total-label" colspan="2">(小写)¥</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sign-row">
+        <span>送货人签字:<span class="blank">&nbsp;</span></span>
+        <span>收货人签字:<span class="blank">&nbsp;</span></span>
+        <span>收货时间:<span class="blank" style="min-width:12mm">&nbsp;</span>时<span class="blank" style="min-width:12mm">&nbsp;</span>分</span>
+      </div>
+
+      <div class="foot-note">请收货人核对品名数量后签字;单价金额供店主对账使用。本单为结算凭证,请妥善保存。(本单一式三联:第①联客户联、第②联对账联、第③联存根联)</div>
+    </section>
+
+  </div>
+
+</body>
+</html>

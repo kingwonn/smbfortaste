@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>中山店铺 对账单(A4打印版)</title>
+<style>
+  /* ===== 基础 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    font-family: "SimSun", "宋体", "Songti SC", "Noto Serif CJK SC", serif;
+    color: #000;
+    background: #f2f2f2;
+  }
+
+  /* ===== 屏幕预览:模拟一张A4纸 ===== */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 6mm auto;
+    padding: 12mm 16mm;
+    background: #fff;
+    box-shadow: 0 0 4mm rgba(0,0,0,.25);
+  }
+
+  /* ===== 顶部不打印的使用说明条 ===== */
+  .no-print {
+    width: 210mm;
+    margin: 4mm auto 0;
+    padding: 3mm 5mm;
+    background: #fff;
+    border: 1px dashed #000;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+  .no-print b { font-size: 11pt; }
+
+  /* ===== 标题与信息栏 ===== */
+  .title {
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    letter-spacing: 3pt;
+    margin-bottom: 4mm;
+  }
+  .info-row {
+    display: flex;
+    font-size: 11.5pt;
+    line-height: 1.8;
+    margin-bottom: 1.5mm;
+  }
+  .info-row .item { white-space: nowrap; }
+  .info-row .grow { flex: 1; }
+  .blank {
+    display: inline-block;
+    border-bottom: 0.35mm solid #000;
+    min-width: 30mm;
+  }
+  .blank.w-short { min-width: 12mm; }
+  .blank.w-mid   { min-width: 45mm; }
+
+  /* ===== 明细表 ===== */
+  .table-caption {
+    font-size: 11.5pt;
+    font-weight: bold;
+    margin: 2.5mm 0 1.5mm;
+  }
+  table.detail {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 3mm;
+  }
+  table.detail th, table.detail td {
+    border: 0.35mm solid #000;
+    font-size: 11pt;
+    padding: 0 1.5mm;
+    height: 7.6mm;
+    text-align: center;
+    overflow: hidden;
+  }
+  table.detail th { font-weight: bold; }
+  table.detail col.c-date { width: 28%; }
+  table.detail col.c-no   { width: 42%; }
+  table.detail col.c-amt  { width: 30%; }
+  table.detail td.total-label {
+    text-align: right;
+    font-weight: bold;
+    padding-right: 3mm;
+  }
+  table.detail td.total-amt { font-weight: bold; }
+
+  /* ===== 汇总表 ===== */
+  table.summary {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-bottom: 4mm;
+  }
+  table.summary th, table.summary td {
+    border: 0.35mm solid #000;
+    font-size: 11.5pt;
+    padding: 0 1.5mm;
+    height: 8.5mm;
+    text-align: center;
+  }
+  table.summary th { font-weight: bold; }
+  table.summary td.formula {
+    font-size: 10pt;
+  }
+  .capital-row {
+    font-size: 11.5pt;
+    line-height: 1.8;
+    margin-bottom: 5mm;
+  }
+  .capital-row .blank { min-width: 90mm; }
+
+  /* ===== 签字栏 ===== */
+  .sign-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5pt;
+    line-height: 1.8;
+    margin: 3mm 0 4mm;
+  }
+  .sign-row .blank { min-width: 32mm; }
+
+  .foot-note {
+    font-size: 10pt;
+    line-height: 1.6;
+    border-top: 0.25mm solid #000;
+    padding-top: 1.5mm;
+  }
+
+  /* ===== 打印样式 ===== */
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    html, body { background: #fff; }
+    .no-print { display: none !important; }
+    .page {
+      width: 210mm;
+      min-height: 0;
+      margin: 0;
+      padding: 12mm 16mm;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="no-print">
+    <b>使用说明(此条不会被打印):</b>每月月底(或约定的结账日)按客户打印一张,先把本期每张回执单的对账联抄进明细表,算好期末应收,再带上回执单一起去客户店里当面核对。
+    建议一式两份:客户签字确认后,一份留给客户,一份自己带回钉在存根上。收到货款后在应收账里销账(记账方法见《05-财务与对账》)。
+  </div>
+
+  <div class="page">
+
+    <div class="title">中山店铺 对账单</div>
+
+    <div class="info-row">
+      <span class="item">对账期间:<span class="blank">&nbsp;</span>年<span class="blank w-short">&nbsp;</span>月<span class="blank w-short">&nbsp;</span>日 至 <span class="blank">&nbsp;</span>年<span class="blank w-short">&nbsp;</span>月<span class="blank w-short">&nbsp;</span>日</span>
+      <span class="grow"></span>
+      <span class="item">客户:<span class="blank w-mid">&nbsp;</span></span>
+    </div>
+    <div class="info-row">
+      <span class="item">期初欠款(上期结转未付):¥<span class="blank">&nbsp;</span>元</span>
+    </div>
+
+    <div class="table-caption">本期送货明细(逐笔对应送货回执单)</div>
+    <table class="detail">
+      <colgroup>
+        <col class="c-date"><col class="c-no"><col class="c-amt">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>日期</th><th>回执单号</th><th>金额(元)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr><td>&nbsp;</td><td>HZ</td><td></td></tr>
+        <tr>
+          <td class="total-label" colspan="2">本期送货合计</td>
+          <td class="total-amt"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="summary">
+      <colgroup>
+        <col style="width:25%"><col style="width:25%"><col style="width:25%"><col style="width:25%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>期初欠款(元)</th><th>本期送货合计(元)</th><th>本期已收(元)</th><th>期末应收(元)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>&nbsp;</td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td class="formula" colspan="4">算法:期末应收 = 期初欠款 + 本期送货合计 − 本期已收</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="capital-row">期末应收(大写):<span class="blank">&nbsp;</span>元整</div>
+
+    <div class="sign-row">
+      <span>门店经手人签字:<span class="blank">&nbsp;</span></span>
+      <span>客户确认签字:<span class="blank">&nbsp;</span></span>
+      <span>日期:<span class="blank w-short" style="min-width:18mm">&nbsp;</span>年<span class="blank w-short">&nbsp;</span>月<span class="blank w-short">&nbsp;</span>日</span>
+    </div>
+
+    <div class="foot-note">请对照送货回执单客户联逐笔核对,如有出入3日内提出。</div>
+
+  </div>
+
+</body>
+</html>
