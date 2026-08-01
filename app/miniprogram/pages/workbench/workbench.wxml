@@ -1,0 +1,6 @@
+<view class="card" wx:for="{{queues}}" wx:key="key" bindtap="openQueue" data-i="{{index}}">
+  <view style="display:flex;justify-content:space-between;align-items:center;">
+    <text style="font-weight:700;">{{item.label}}</text>
+    <text class="{{item.count>0?'bad':'good'}}">{{item.count>0?item.count+' 件':'清了'}}</text>
+  </view>
+</view>

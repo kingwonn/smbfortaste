@@ -1,0 +1,8 @@
+{
+  "description": "中山店铺·配送小生意管理系统(见 design/ 全套设计)",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "compileType": "miniprogram",
+  "setting": { "es6": true, "minified": true },
+  "appid": "touristappid"
+}

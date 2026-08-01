@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/workbench/workbench",
+    "pages/paste/paste",
+    "pages/daily-reconcile/daily-reconcile",
+    "pages/receipt/receipt"
+  ],
+  "window": {
+    "navigationBarTitleText": "中山店铺",
+    "navigationBarBackgroundColor": "#0d6e5f",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f6f7f8"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

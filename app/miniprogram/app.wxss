@@ -1,0 +1,6 @@
+/* 全局基线(design/01 四 + design/05 包8):正文≥17px,主按钮≥56px,状态色永远带文字 */
+page { font-size: 34rpx; color: #1f2328; background: #f6f7f8; }
+.btn-primary { background: #0d6e5f; color: #fff; border-radius: 28rpx; min-height: 112rpx;
+  font-size: 36rpx; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.card { background: #fff; border-radius: 28rpx; padding: 28rpx; margin: 20rpx; }
+.good { color: #15803d; } .warn { color: #b45309; } .bad { color: #b91c1c; } .cash { color: #c2410c; }

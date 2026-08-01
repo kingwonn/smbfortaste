@@ -1,0 +1,8 @@
+<view class="card">
+  <view class="btn-primary" bindtap="takePhoto">拍签好字的回执</view>
+  <image wx:if="{{photo}}" src="{{photo}}" mode="widthFix" style="width:100%;margin-top:20rpx;" />
+  <view wx:if="{{photo}}" style="display:flex;gap:20rpx;margin-top:20rpx;">
+    <view class="btn-primary" style="flex:1;" bindtap="markSame">跟单上一样</view>
+    <view class="btn-primary" style="flex:1;background:#b45309;" bindtap="markDiff">有改动</view>
+  </view>
+</view>

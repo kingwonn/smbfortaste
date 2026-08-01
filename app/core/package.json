@@ -1,0 +1,10 @@
+{
+  "name": "smb-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "配送小生意管理系统·账务内核与业务核心(平台无关,零依赖;小程序云函数与自建后端共用)",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test test/"
+  }
+}

@@ -1,0 +1,11 @@
+<view class="card">
+  <textarea placeholder="把微信里转好文字的订货消息,整段粘到这里(可多家一起)"
+    style="width:100%;min-height:300rpx;" bindinput="onInput" value="{{text}}" />
+  <view class="btn-primary" bindtap="doSplit">拆单</view>
+</view>
+<view class="card" wx:for="{{orders}}" wx:key="index">
+  <text style="font-weight:700;">{{item.customerName || '未认出客户'}}</text>
+  <view wx:for="{{item.lines}}" wx:for-item="l" wx:key="raw">
+    <text class="{{l.flagged?'bad':''}}">{{l.raw}} {{l.flagged? '← '+l.reason : '✓'}}</text>
+  </view>
+</view>
