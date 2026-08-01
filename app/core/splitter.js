@@ -17,19 +17,23 @@ function parseCnNum(s) {
 }
 
 // customers: [{id, name, wxRemark, aliases: [], catalog: [{phrase, sku, spec, unit}]}]
+// 最长匹配优先:真实客户名常互为前缀("十六"/"十六对面",design/14),
+// 命中键更长者胜;等长且属不同客户才算歧义("老王"小名同像两家→标红不猜)。
 function matchCustomer(line, customers) {
   const hits = [];
   for (const c of customers) {
     const keys = [c.name, c.wxRemark, ...(c.aliases || [])].filter(Boolean);
-    const key = keys.find((k) => line.includes(k));
-    if (key) hits.push({ c, key });
+    for (const k of keys) if (line.includes(k)) hits.push({ c, key: k });
   }
-  // 全名/备注命中优先于小名:唯一的强命中直接采纳
-  const strong = hits.filter((h) => h.key === h.c.name || h.key === h.c.wxRemark);
-  if (strong.length === 1) return { customer: strong[0].c, key: strong[0].key, ambiguous: false };
-  if (hits.length === 1) return { customer: hits[0].c, key: hits[0].key, ambiguous: false };
-  if (hits.length > 1) return { customer: null, ambiguous: true, candidates: hits.map((h) => h.c.name) };
-  return { customer: null, ambiguous: false };
+  if (hits.length === 0) return { customer: null, ambiguous: false };
+  hits.sort((a, b) => b.key.length - a.key.length);
+  const top = hits[0];
+  const rival = hits.find((h) => h.c.id !== top.c.id && h.key.length === top.key.length);
+  if (rival) {
+    const names = [...new Set(hits.filter((h) => h.key.length === top.key.length).map((h) => h.c.name))];
+    return { customer: null, ambiguous: true, candidates: names };
+  }
+  return { customer: top.c, key: top.key, ambiguous: false };
 }
 
 function parseItems(text, catalog) {

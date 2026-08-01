@@ -98,4 +98,24 @@ async function settlementReadiness(store, { tenantId, partyId, from, to }) {
   return { ready: missing.length === 0 && unsettled.length === 0, missingDailyStatements: missing, unconfirmedDailyStatements: unsettled };
 }
 
-module.exports = { generateStatement, markStatement, settlementReadiness, stmtKey };
+// 结算单极简视图(design/14 修订④,照抄实物月账页):"日期=金额"逐日清单+合计;
+// 收款另行小计。客户看惯的就是这个样子,四段式数字只作附注。
+async function monthlyView(store, { tenantId, partyId, from, to, direction = 'receivable' }) {
+  const entries = await store.find('entries', {
+    eq: { tenantId, direction, partyId },
+    range: { field: 'bizDate', from, to },
+  });
+  const byDay = new Map();
+  let paidCents = 0;
+  for (const e of entries) {
+    if (e.type === 'opening') continue;
+    if (e.type === 'payment') { paidCents += -e.amountCents; continue; }
+    byDay.set(e.bizDate, (byDay.get(e.bizDate) || 0) + e.amountCents);
+  }
+  const days = [...byDay.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([date, cents]) => ({ date, cents }));
+  const totalCents = days.reduce((s, d) => s + d.cents, 0);
+  return { days, totalCents, paidCents };
+}
+
+module.exports = { generateStatement, markStatement, settlementReadiness, monthlyView, stmtKey };

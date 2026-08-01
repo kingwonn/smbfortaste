@@ -12,6 +12,9 @@ const COLS = {
   allocations: ['tenantId', 'direction', 'partyId', 'paymentEntryId'],
   balances: ['tenantId', 'direction', 'partyId'],
   statements: ['tenantId', 'partyId', 'kind', 'periodKey'],
+  receipts: ['tenantId', 'partyId', 'bizDate', 'held'],
+  customers: ['tenantId'],
+  products: ['tenantId'],
   counters: [],
   doc_numbers: ['tenantId', 'no'],
 };

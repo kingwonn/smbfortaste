@@ -21,6 +21,16 @@ function toCents(v) {
   return sign * (yuan * 100 + frac);
 }
 
+// 实称数量×单价(分)→金额(分):数量可带小数(实称2.8斤),按千分位整数化后相乘取整,
+// 杜绝浮点误差(23.7×1.9元=45.03 必须分毫不差——妹妹笔记本上的真实算式)。
+function mulQty(unitPriceCents, qty) {
+  assertCents(unitPriceCents, 'unitPriceCents');
+  if (typeof qty !== 'number' || !(qty > 0)) throw new MoneyError(`数量非法: ${qty}`);
+  const qtyMil = Math.round(qty * 1000);
+  if (Math.abs(qtyMil - qty * 1000) > 0.001) throw new MoneyError(`数量最多三位小数: ${qty}`);
+  return Math.round((qtyMil * unitPriceCents) / 1000);
+}
+
 function formatYuan(cents) {
   assertCents(cents, 'formatYuan');
   const sign = cents < 0 ? '-' : '';
@@ -28,4 +38,4 @@ function formatYuan(cents) {
   return `${sign}${Math.floor(abs / 100)}.${String(abs % 100).padStart(2, '0')}`;
 }
 
-module.exports = { MoneyError, assertCents, toCents, formatYuan };
+module.exports = { MoneyError, assertCents, toCents, formatYuan, mulQty };

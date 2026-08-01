@@ -54,6 +54,34 @@ CREATE TABLE IF NOT EXISTS counters (
   data TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS receipts (
+  id   TEXT PRIMARY KEY,
+  v    INTEGER NOT NULL DEFAULT 1,
+  data TEXT NOT NULL,
+  tenantId  TEXT GENERATED ALWAYS AS (json_extract(data,'$.tenantId')) STORED,
+  partyId   TEXT GENERATED ALWAYS AS (json_extract(data,'$.partyId')) STORED,
+  bizDate   TEXT GENERATED ALWAYS AS (json_extract(data,'$.bizDate')) STORED,
+  held      INTEGER GENERATED ALWAYS AS (json_extract(data,'$.held')) STORED
+);
+CREATE INDEX IF NOT EXISTS idx_receipts_party ON receipts(tenantId, partyId, bizDate);
+CREATE INDEX IF NOT EXISTS idx_receipts_held ON receipts(tenantId, held);
+
+CREATE TABLE IF NOT EXISTS customers (
+  id   TEXT PRIMARY KEY,
+  v    INTEGER NOT NULL DEFAULT 1,
+  data TEXT NOT NULL,
+  tenantId TEXT GENERATED ALWAYS AS (json_extract(data,'$.tenantId')) STORED
+);
+CREATE INDEX IF NOT EXISTS idx_customers_tenant ON customers(tenantId);
+
+CREATE TABLE IF NOT EXISTS products (
+  id   TEXT PRIMARY KEY,
+  v    INTEGER NOT NULL DEFAULT 1,
+  data TEXT NOT NULL,
+  tenantId TEXT GENERATED ALWAYS AS (json_extract(data,'$.tenantId')) STORED
+);
+CREATE INDEX IF NOT EXISTS idx_products_tenant ON products(tenantId);
+
 CREATE TABLE IF NOT EXISTS doc_numbers (
   id   TEXT PRIMARY KEY,
   v    INTEGER NOT NULL DEFAULT 1,
