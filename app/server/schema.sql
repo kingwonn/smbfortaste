@@ -66,6 +66,17 @@ CREATE TABLE IF NOT EXISTS receipts (
 CREATE INDEX IF NOT EXISTS idx_receipts_party ON receipts(tenantId, partyId, bizDate);
 CREATE INDEX IF NOT EXISTS idx_receipts_held ON receipts(tenantId, held);
 
+CREATE TABLE IF NOT EXISTS intakes (
+  id   TEXT PRIMARY KEY,
+  v    INTEGER NOT NULL DEFAULT 1,
+  data TEXT NOT NULL,
+  tenantId TEXT GENERATED ALWAYS AS (json_extract(data,'$.tenantId')) STORED,
+  partyId  TEXT GENERATED ALWAYS AS (json_extract(data,'$.partyId')) STORED,
+  status   TEXT GENERATED ALWAYS AS (json_extract(data,'$.status')) STORED,
+  bizDate  TEXT GENERATED ALWAYS AS (json_extract(data,'$.bizDate')) STORED
+);
+CREATE INDEX IF NOT EXISTS idx_intakes_status ON intakes(tenantId, status);
+
 CREATE TABLE IF NOT EXISTS customers (
   id   TEXT PRIMARY KEY,
   v    INTEGER NOT NULL DEFAULT 1,

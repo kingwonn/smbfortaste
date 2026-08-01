@@ -13,6 +13,7 @@ const COLS = {
   balances: ['tenantId', 'direction', 'partyId'],
   statements: ['tenantId', 'partyId', 'kind', 'periodKey'],
   receipts: ['tenantId', 'partyId', 'bizDate', 'held'],
+  intakes: ['tenantId', 'partyId', 'status', 'bizDate'],
   customers: ['tenantId'],
   products: ['tenantId'],
   counters: [],

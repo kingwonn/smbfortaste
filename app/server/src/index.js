@@ -10,10 +10,14 @@ const { applyEntry, getBalance, recalcAndVerify } = require('../../core/balance'
 const { recordPayment, aging } = require('../../core/allocation');
 const { generateStatement, markStatement, settlementReadiness, monthlyView } = require('../../core/statement');
 const { postDeliveryReceipt, confirmHeldReceipt } = require('../../core/delivery');
+const { createIntakeFromText, getTodolist, confirmIntake, dismissIntake } = require('../../core/intake');
 const { nextNo } = require('../../core/numbering');
 const { seedTenant } = require('../seed');
 
 const app = new Hono();
+
+// 业务异常统一 JSON:message 是给老板娘看的中文,不吐堆栈
+app.onError((err, c) => c.json({ ok: false, error: String(err.message || err) }, 500));
 
 // 鉴权中间件(M1:微信 code2session 换 openid→user→tenantId;当前为骨架桩)
 app.use('/api/*', async (c, next) => {
@@ -73,6 +77,40 @@ app.get('/api/customers/:id/monthly', async (c) => {
   const q = c.req.query();
   const view = await monthlyView(store, { tenantId, partyId: c.req.param('id'), from: q.from, to: q.to });
   return c.json(view);
+});
+
+// 收单箱(design/15):任何渠道的订货文本 → 需求 todolist。
+// PC 粘贴/剪贴板监听/公众号消息/OCR 全走同一入口,拆单、归组、标红,绝不猜。
+app.post('/api/intake', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const b = await c.req.json();
+  const r = await createIntakeFromText(store, {
+    tenantId, text: b.text, source: b.source, bizDate: b.bizDate,
+  });
+  return c.json({
+    ok: true,
+    created: r.created.map((it) => ({ id: it.id, customerName: it.customerName, status: it.status, lines: it.lines.length })),
+    unassignedLines: r.unassignedLines,
+  });
+});
+
+app.get('/api/intake/todolist', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  return c.json({ groups: await getTodolist(store, { tenantId, bizDate: c.req.query('bizDate') }) });
+});
+
+app.post('/api/intake/:id/confirm', async (c) => {
+  const store = c.get('store');
+  const b = await c.req.json().catch(() => ({}));
+  const r = await confirmIntake(store, c.req.param('id'), { lines: b.lines, partyId: b.partyId });
+  return c.json({ ok: true, status: r.status });
+});
+
+app.post('/api/intake/:id/dismiss', async (c) => {
+  const store = c.get('store');
+  const b = await c.req.json().catch(() => ({}));
+  const r = await dismissIntake(store, c.req.param('id'), b.reason);
+  return c.json({ ok: true, status: r.status });
 });
 
 // 家用版初始建档(仅 DEV_SEED=1 环境开放;真实档案以店主校对为准)
