@@ -31,6 +31,17 @@ app.use('/api/*', async (c, next) => {
 
 app.get('/health', (c) => c.json({ ok: true }));
 
+// 收单工作台页面(家用版 v0):浏览器直开
+const { WORKBENCH_HTML } = require('./workbench');
+app.get('/', (c) => c.html(WORKBENCH_HTML));
+
+// 客户列表(工作台"这是哪家店?"下拉用)
+app.get('/api/customers', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const customers = await store.find('customers', { eq: { tenantId } });
+  return c.json({ customers: customers.map((x) => ({ id: x.id, name: x.name, aliases: x.aliases || [] })) });
+});
+
 // 签收挂账(design/14 修订①):明细行照抄笔记本格式——品名|要货|实称|单价,金额服务端算;
 // 差异闸门:diff=true 只存回执不挂账,进老板娘待改账队列。兼容旧的整单金额模式(amountYuan)。
 app.post('/api/receipts', async (c) => {

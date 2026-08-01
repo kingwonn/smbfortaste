@@ -59,3 +59,11 @@ test('端到端:签收挂账→差异闸门→记款→日账单→确认→结�
   assert.equal(r.json.balanceCents, 10500);
   assert.equal(r.json.aging.bucket, 'green');
 });
+
+test('收单工作台页面:GET / 下发自包含 HTML', async () => {
+  const res = await app.request('/', { method: 'GET' }, { DB: newMockD1() });
+  assert.equal(res.status, 200);
+  const html = await res.text();
+  assert.match(html, /收单工作台/);
+  assert.match(html, /今晚要办/);
+});
