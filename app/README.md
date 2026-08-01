@@ -16,14 +16,23 @@ app/
 │   ├── splitter.js       # M0打靶② 批量贴单拆分POC(拿不准标红,绝不猜)
 │   └── test/             # 22 个测试,node --test 全绿
 ├── miniprogram/          # 微信小程序骨架(4个M1核心页:今晚要办/贴单/今日对账/拍回执)
-├── cloudfunctions/       # 云函数(M1落地时创建,见其README)
+├── server/               # Cloudflare Workers 服务层(Hono):后端控制面,见 design/10
+│   ├── src/index.js      # 路由:签收挂账(含差异闸门)/记款/日账单/表态/结算就绪/账龄 + Cron夜间重算
+│   ├── schema.sql        # D1 库表(JSON data + 生成列索引 + 唯一约束)
+│   ├── wrangler.toml     # 部署配置(D1/R2/Cron)
+│   └── test/api.test.js  # Hono 端到端(app.request + D1 模拟器)
 └── project.config.json   # 微信开发者工具项目配置
 ```
+
+存储双适配:`core/store-memory.js`(测试/模拟并发)与 `core/store-d1.js`(生产,Cloudflare D1),
+同一契约(insert/get/cas/find 查询对象),同套内核测试双存储全绿;本地用 `test/d1-mock.js`
+(node:sqlite)模拟 D1,零外部依赖。
 
 ## 跑测试
 
 ```bash
-cd app/core && node --test
+cd app/core && node --test     # 28 个:内核四件事(内存+D1双存储)+拆单POC
+cd app/server && node --test   # 2 个:服务层端到端
 ```
 
 覆盖:100 并发取号零重号、租户隔离、FIFO 跨笔分配、凑整挂预收、手工改分配校验、

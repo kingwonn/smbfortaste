@@ -1,0 +1,23 @@
+# Cloudflare Workers 配置(design/10:后端控制面在 CF)
+# 首次部署:
+#   wrangler d1 create smb-taste && 把 database_id 填进下方
+#   wrangler d1 execute smb-taste --file=schema.sql
+#   wrangler r2 bucket create smb-receipts
+#   wrangler deploy
+name = "smb-taste-api"
+main = "src/index.js"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "smb-taste"
+database_id = "TODO-填入-wrangler-d1-create-的输出"
+
+[[r2_buckets]]
+binding = "RECEIPT_PHOTOS"
+bucket_name = "smb-receipts"
+
+# 夜间余额重算校验(北京时间 03:00 = UTC 19:00)
+[triggers]
+crons = ["0 19 * * *"]

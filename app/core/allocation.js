@@ -7,15 +7,10 @@ const { assertCents } = require('./money');
 const { applyEntry } = require('./balance');
 
 async function openDeliveries(store, tenantId, partyId, direction = 'receivable') {
-  const entries = await store.find(
-    'entries',
-    (e) => e.tenantId === tenantId && e.direction === direction && e.partyId === partyId
-      && (e.type === 'delivery' || e.type === 'opening'),
-  );
-  const allocs = await store.find(
-    'allocations',
-    (a) => a.tenantId === tenantId && a.direction === direction && a.partyId === partyId,
-  );
+  const entries = await store.find('entries', {
+    eq: { tenantId, direction, partyId }, in: { type: ['delivery', 'opening'] },
+  });
+  const allocs = await store.find('allocations', { eq: { tenantId, direction, partyId } });
   const allocatedBy = new Map();
   for (const a of allocs) {
     if (a.entryId != null) allocatedBy.set(a.entryId, (allocatedBy.get(a.entryId) || 0) + a.amountCents);
@@ -63,7 +58,7 @@ async function reallocatePayment(store, { tenantId, partyId, paymentEntryId, all
   if (!payment || payment.type !== 'payment') throw new Error('收款流水不存在');
   const total = allocations.reduce((s, a) => s + assertCents(a.amountCents, 'realloc'), 0);
   if (total !== -payment.amountCents) throw new Error('分配合计必须等于收款金额');
-  const olds = await store.find('allocations', (a) => a.paymentEntryId === paymentEntryId);
+  const olds = await store.find('allocations', { eq: { paymentEntryId } });
   for (const o of olds) await store.cas('allocations', o.id, o._v, { voided: true, amountCents: 0 });
   const made = [];
   for (const a of allocations) {

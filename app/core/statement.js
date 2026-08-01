@@ -20,11 +20,10 @@ async function generateStatement(store, {
   const existing = await store.get('statements', key);
   if (existing) return { stmt: existing, created: false };
 
-  const entries = await store.find(
-    'entries',
-    (e) => e.tenantId === tenantId && e.direction === direction && e.partyId === partyId
-      && e.type !== 'opening' && e.bizDate >= from && e.bizDate <= to,
-  );
+  const entries = (await store.find('entries', {
+    eq: { tenantId, direction, partyId },
+    range: { field: 'bizDate', from, to },
+  })).filter((e) => e.type !== 'opening');
 
   let deliveryCents = 0; let paidCents = 0; let adjustCents = 0;
   const lines = [];
@@ -84,11 +83,10 @@ async function markStatement(store, key, action, { by, at, memo, promisedPayDate
 // 结算单聚合校验:DZ 期内每个有流水的日子都应存在已表态的 RZ——
 // "结算单上不许出现第一次见到的数字"落成可执行检查(design/08 四)。
 async function settlementReadiness(store, { tenantId, partyId, from, to }) {
-  const entries = await store.find(
-    'entries',
-    (e) => e.tenantId === tenantId && e.partyId === partyId && e.type === 'delivery'
-      && e.bizDate >= from && e.bizDate <= to,
-  );
+  const entries = await store.find('entries', {
+    eq: { tenantId, partyId, type: 'delivery' },
+    range: { field: 'bizDate', from, to },
+  });
   const days = [...new Set(entries.map((e) => e.bizDate))];
   const missing = []; const unsettled = [];
   for (const d of days) {

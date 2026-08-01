@@ -63,13 +63,13 @@ async function getBalance(store, tenantId, partyId, direction = 'receivable') {
 
 // 夜间重算校验:逐户以流水求和比对物化余额;不平返回报警清单;repair=true 时以流水为准修复。
 async function recalcAndVerify(store, tenantId, { repair = false } = {}) {
-  const entries = await store.find('entries', (e) => e.tenantId === tenantId);
+  const entries = await store.find('entries', { eq: { tenantId } });
   const computed = new Map();
   for (const e of entries) {
     const bid = balanceId(e.tenantId, e.direction, e.partyId);
     computed.set(bid, (computed.get(bid) || 0) + e.amountCents);
   }
-  const balances = await store.find('balances', (b) => b.tenantId === tenantId);
+  const balances = await store.find('balances', { eq: { tenantId } });
   const seen = new Set();
   const mismatches = [];
   for (const b of balances) {
