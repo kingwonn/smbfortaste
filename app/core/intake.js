@@ -38,11 +38,12 @@ async function createIntakeFromText(store, { tenantId, text, source, bizDate, ll
   return { created, unassignedLines: unassigned, engine: result.engine || 'rules' };
 }
 
-// 今日需求 todolist:按客户归组,标红的排最前(先处理拿不准的)
+// 今日需求 todolist:按客户归组,标红的排最前(先处理拿不准的)。
+// 白名单过滤:只有 pending/flagged 算待办——booked(已开单)绝不能回流,否则会被再确认、再挂账。
 async function getTodolist(store, { tenantId, bizDate }) {
   const q = { eq: { tenantId } };
   const all = (await store.find('intakes', q))
-    .filter((it) => it.status !== 'confirmed' && it.status !== 'dismissed')
+    .filter((it) => it.status === 'pending' || it.status === 'flagged')
     .filter((it) => !bizDate || !it.bizDate || it.bizDate === bizDate);
   const groups = new Map();
   for (const it of all) {
@@ -63,6 +64,9 @@ async function getTodolist(store, { tenantId, bizDate }) {
 async function confirmIntake(store, intakeId, { lines, partyId } = {}) {
   const it = await store.get('intakes', intakeId);
   if (!it) throw new Error('收单条目不存在');
+  if (it.status !== 'pending' && it.status !== 'flagged') {
+    throw new Error(`该条目已${it.status === 'booked' ? '开单挂账' : '处理过'},不能再确认`);
+  }
   const finalLines = lines || it.lines;
   if (finalLines.some((l) => l.flagged)) throw new Error('仍有标红行未处理,不能确认');
   const finalParty = partyId || it.partyId;
@@ -97,6 +101,7 @@ async function bookIntake(store, intakeId, { receiptNo } = {}) {
 async function dismissIntake(store, intakeId, reason) {
   const it = await store.get('intakes', intakeId);
   if (!it) throw new Error('收单条目不存在');
+  if (it.status === 'booked') throw new Error('该条目已开单挂账,要撤请先冲回执,不能直接作废');
   return store.cas('intakes', intakeId, it._v, { status: 'dismissed', dismissReason: reason || null });
 }
 

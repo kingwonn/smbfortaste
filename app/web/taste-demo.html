@@ -1,0 +1,2181 @@
+<title>汇金源 · 老板娘工作台(体验版)</title>
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --paper:#f2f4f1; --card:#ffffff; --card2:#f7f9f6;
+  --ink:#212722; --ink2:#5a655c; --ink3:#8a948c;
+  --line:#e3e7e1; --line2:#cfd7cf;
+  --brand:#1d5b4c; --brand-2:#2a7a66; --brand-weak:#e4efe9; --brand-line:#bcd6cc;
+  --red:#b5372a; --red-bg:#f9e9e5; --amber:#9a6708; --amber-bg:#f6eeda;
+  --good:#276b3d; --good-bg:#e4f0e2;
+  --shadow:0 1px 2px rgba(30,40,34,.05),0 4px 14px rgba(30,40,34,.06);
+  --serif:"Songti SC","STSong","NSimSun","SimSun",serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#141915; --card:#1c231e; --card2:#212a23;
+  --ink:#e6ebe6; --ink2:#a3aea5; --ink3:#737d75;
+  --line:#2b332c; --line2:#3a443b;
+  --brand:#57ab90; --brand-2:#6dbfa4; --brand-weak:#24382f; --brand-line:#33564a;
+  --red:#e08072; --red-bg:#3a2420; --amber:#d8a24e; --amber-bg:#382d18;
+  --good:#74bd8a; --good-bg:#223526;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}}
+:root[data-theme="light"]{
+  --paper:#f2f4f1; --card:#ffffff; --card2:#f7f9f6;
+  --ink:#212722; --ink2:#5a655c; --ink3:#8a948c;
+  --line:#e3e7e1; --line2:#cfd7cf;
+  --brand:#1d5b4c; --brand-2:#2a7a66; --brand-weak:#e4efe9; --brand-line:#bcd6cc;
+  --red:#b5372a; --red-bg:#f9e9e5; --amber:#9a6708; --amber-bg:#f6eeda;
+  --good:#276b3d; --good-bg:#e4f0e2;
+  --shadow:0 1px 2px rgba(30,40,34,.05),0 4px 14px rgba(30,40,34,.06);
+}
+:root[data-theme="dark"]{
+  --paper:#141915; --card:#1c231e; --card2:#212a23;
+  --ink:#e6ebe6; --ink2:#a3aea5; --ink3:#737d75;
+  --line:#2b332c; --line2:#3a443b;
+  --brand:#57ab90; --brand-2:#6dbfa4; --brand-weak:#24382f; --brand-line:#33564a;
+  --red:#e08072; --red-bg:#3a2420; --amber:#d8a24e; --amber-bg:#382d18;
+  --good:#74bd8a; --good-bg:#223526;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper)}
+button{font-family:inherit}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+/* ---- 顶栏 ---- */
+.bar{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(30,40,34,.03)}
+.bar-in{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:6px}
+.brand .mark{font-family:var(--serif);font-size:23px;font-weight:700;color:var(--brand);letter-spacing:.06em}
+.brand .tag{font-size:12.5px;color:var(--ink3);letter-spacing:.12em}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{border:0;background:none;border-radius:9px;padding:9px 16px;font-size:15.5px;font-weight:600;
+  color:var(--ink2);cursor:pointer;position:relative}
+.tab:hover{background:var(--card2);color:var(--ink)}
+.tab.on{background:var(--brand-weak);color:var(--brand)}
+.tab .bdg{display:inline-block;min-width:19px;text-align:center;border-radius:999px;font-size:12px;
+  padding:1px 5px;margin-left:6px;background:var(--line);color:var(--ink2);vertical-align:1px}
+.tab .bdg.hot{background:var(--red);color:#fff}
+.tab .bdg.warm{background:var(--amber);color:#fff}
+.bar-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.today{font-size:13.5px;color:var(--ink3)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 13px;font-size:13.5px;
+  font-weight:600;cursor:pointer;border:1px solid var(--line)}
+.pill.ok{background:var(--good-bg);color:var(--good);border-color:transparent}
+.pill.bad{background:var(--red-bg);color:var(--red);border-color:transparent}
+.btn-speak{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:999px;padding:8px 17px;
+  font-size:14.5px;font-weight:700;cursor:pointer;background:var(--brand);color:#fff}
+.btn-speak:hover{background:var(--brand-2)}
+.btn-speak.speaking{background:var(--red)}
+.btn-speak svg{width:15px;height:15px;fill:currentColor}
+
+/* ---- 骨架 ---- */
+main{max-width:1280px;margin:0 auto;padding:18px 20px 60px}
+.page{display:none}.page.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.card+.card{margin-top:14px}
+.card-h{display:flex;align-items:baseline;gap:10px;padding:14px 18px 0;flex-wrap:wrap}
+.card-t{font-size:16.5px;font-weight:800}
+.card-s{font-size:13px;color:var(--ink3)}
+.card-b{padding:12px 18px 16px}
+.mut{color:var(--ink2)}.mut3{color:var(--ink3)}
+.empty{color:var(--ink3);padding:20px 4px;font-size:15px;text-align:center}
+.empty b{color:var(--good)}
+a.jump{color:var(--brand);font-weight:600;cursor:pointer;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+
+/* ---- 下一步横幅 ---- */
+.next{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--brand-line);
+  border-left:4px solid var(--brand);border-radius:14px;padding:14px 18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.next.calm{border-left-color:var(--good);border-color:var(--line)}
+.next .lead{font-size:13px;color:var(--ink3);letter-spacing:.1em;white-space:nowrap}
+.next .say{font-size:17.5px;font-weight:800;flex:1;min-width:200px}
+.next .go{border:0;border-radius:9px;padding:9px 18px;font-size:15px;font-weight:700;cursor:pointer;
+  background:var(--brand);color:#fff;white-space:nowrap}
+.next .go:hover{background:var(--brand-2)}
+
+/* ---- 统计块 ---- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;
+  cursor:pointer;box-shadow:var(--shadow);transition:border-color .12s}
+.kpi:hover{border-color:var(--brand-line)}
+.kpi .k{font-size:13px;color:var(--ink2);display:flex;justify-content:space-between;gap:8px}
+.kpi .v{font-size:27px;font-weight:800;margin-top:3px}
+.kpi .v small{font-size:15px;font-weight:600;color:var(--ink2)}
+.kpi .s{font-size:13px;color:var(--ink3);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;font-weight:700}
+.chip.red{background:var(--red-bg);color:var(--red)}
+.chip.amber{background:var(--amber-bg);color:var(--amber)}
+.chip.good{background:var(--good-bg);color:var(--good)}
+.chip.brand{background:var(--brand-weak);color:var(--brand)}
+.chip.gray{background:var(--card2);color:var(--ink2);border:1px solid var(--line)}
+
+.cols{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:14px;align-items:start}
+@media (max-width:980px){.cols{grid-template-columns:1fr}}
+
+/* ---- 备好的账 ---- */
+.prep{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.prep:last-child{margin-bottom:0}
+.prep-h{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card2);flex-wrap:wrap}
+.prep-h .nm{font-size:16.5px;font-weight:800}
+.prep-h .est{margin-left:auto;font-size:15px;font-weight:800}
+.prep-h .est small{font-size:12.5px;color:var(--ink3);font-weight:600;margin-right:6px}
+.rowline{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px dashed var(--line);font-size:14.5px;flex-wrap:wrap}
+.rowline .pn{font-weight:600;min-width:72px}
+.rowline .qy{color:var(--ink2)}
+.rowline .amt{margin-left:auto;font-weight:700}
+.prep-f{padding:10px 14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:9px;padding:9px 17px;font-size:15px;
+  font-weight:700;cursor:pointer;background:var(--brand);color:#fff}
+.btn:hover{background:var(--brand-2)}
+.btn.ghost{background:var(--card);color:var(--ink2);border:1px solid var(--line2)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--ink3);background:var(--card)}
+.btn.sm{padding:6px 12px;font-size:13.5px;border-radius:8px}
+.btn.danger{background:var(--red);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:13px;color:var(--ink3);min-height:18px}
+.note.err{color:var(--red)}
+.note.okk{color:var(--good)}
+
+/* ---- 七日走势 ---- */
+.spark{display:flex;align-items:flex-end;gap:7px;height:96px;padding:6px 2px 0}
+.sp{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.sp .bar7{width:100%;max-width:34px;background:var(--brand);opacity:.42;border-radius:4px 4px 0 0;
+  min-height:2px;cursor:pointer;transition:opacity .12s}
+.sp .bar7:hover{opacity:.75}
+.sp.today .bar7{opacity:1}
+.sp .d7{font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.sp.today .d7{color:var(--brand);font-weight:700}
+.sp .v7{font-size:11.5px;font-weight:700;color:var(--ink2);white-space:nowrap;visibility:hidden}
+.sp.today .v7,.sp.peak .v7{visibility:visible}
+
+/* ---- 验证条 ---- */
+.audit-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-top:1px dashed var(--line);font-size:13.5px}
+.audit-row:first-child{border-top:0}
+.audit-row .st{width:19px;height:19px;border-radius:50%;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:11.5px;font-weight:800;margin-top:1px}
+.audit-row .st.ok{background:var(--good-bg);color:var(--good)}
+.audit-row .st.bad{background:var(--red-bg);color:var(--red)}
+.audit-row .iss{color:var(--red);font-size:12.5px;margin-top:2px}
+
+/* ---- 表格 ---- */
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th{font-size:12.5px;color:var(--ink3);font-weight:600;text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px dashed var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+input,select{font-family:inherit;font-size:15px;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line2);border-radius:8px;padding:7px 9px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:var(--brand)}
+input.mini{width:86px;text-align:right}
+input.warnp{border-color:var(--amber);background:var(--amber-bg)}
+textarea{width:100%;min-height:150px;font-family:inherit;font-size:15.5px;color:var(--ink);
+  background:var(--card);padding:12px;border:1.5px solid var(--line2);border-radius:10px;resize:vertical}
+
+/* ---- 收单组 ---- */
+.grp{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.grp.flagged{border-color:var(--red)}
+.grp-h{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card2);flex-wrap:wrap}
+.grp.flagged .grp-h{background:var(--red-bg)}
+.grp-h .nm{font-size:16.5px;font-weight:800}
+.lrow{display:flex;gap:10px;align-items:center;padding:8px 14px;border-top:1px dashed var(--line);font-size:14.5px;flex-wrap:wrap}
+.lrow.bad{background:var(--red-bg)}
+.lrow .why{color:var(--red);font-size:12.5px;font-weight:600}
+.grp-f{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* ---- 客户卡 ---- */
+.acct{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.acct-h{display:flex;align-items:center;gap:12px;padding:13px 16px;flex-wrap:wrap;cursor:pointer}
+.acct-h:hover{background:var(--card2)}
+.acct-h .nm{font-size:17px;font-weight:800}
+.acct-h .bal{margin-left:auto;text-align:right}
+.acct-h .bal .b1{font-size:21px;font-weight:800}
+.acct-h .bal .b2{font-size:12px;color:var(--ink3)}
+.acct-x{border-top:1px solid var(--line);padding:12px 16px;display:none;background:var(--card2)}
+.acct.open .acct-x{display:block}
+.payrow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.verify-line{display:flex;align-items:center;gap:8px;font-size:13px;border-radius:9px;padding:8px 12px;margin:10px 0}
+.verify-line.ok{background:var(--good-bg);color:var(--good)}
+.verify-line.bad{background:var(--red-bg);color:var(--red)}
+.doc{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;background:var(--brand-weak);
+  color:var(--brand);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mono-list{border-top:1px dashed var(--line);margin-top:8px;padding-top:6px}
+.mrow{display:flex;justify-content:space-between;padding:4px 2px;font-size:14.5px}
+.mrow.total{font-weight:800;border-top:1.5px solid var(--ink);margin-top:6px;padding-top:7px}
+
+/* ---- 汇报面板 ---- */
+.brief{position:fixed;right:18px;bottom:18px;width:min(430px,calc(100vw - 36px));max-height:60vh;overflow:auto;
+  background:var(--card);border:1px solid var(--brand-line);border-radius:14px;box-shadow:0 8px 32px rgba(20,30,24,.22);
+  padding:16px 18px;display:none;z-index:50}
+.brief.on{display:block}
+.brief .bt{font-size:14px;font-weight:800;color:var(--brand);letter-spacing:.08em;margin-bottom:8px;display:flex;justify-content:space-between}
+.brief .bx{font-size:15.5px;line-height:1.9}
+.brief .bx span.said{background:var(--brand-weak);border-radius:4px}
+.brief .close{border:0;background:none;color:var(--ink3);cursor:pointer;font-size:15px}
+
+.tip{position:fixed;z-index:60;background:var(--ink);color:var(--paper);font-size:12.5px;border-radius:7px;
+  padding:5px 9px;pointer-events:none;display:none;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+<header class="bar"><div class="bar-in">
+  <div class="brand"><span class="mark">汇金源</span><span class="tag">老板娘工作台</span><span class="chip amber" style="align-self:center">体验版 · 数据在本页,刷新即重置</span></div>
+  <nav class="tabs">
+    <button class="tab on" id="tab-ov" onclick="show('ov')">今日总览</button>
+    <button class="tab" id="tab-in" onclick="show('in')">今晚要办<span class="bdg" id="bdg-in">0</span></button>
+    <button class="tab" id="tab-bk" onclick="show('bk')">记账台<span class="bdg" id="bdg-bk">0</span></button>
+    <button class="tab" id="tab-ac" onclick="show('ac')">客户的账</button>
+  </nav>
+  <div class="bar-right">
+    <span class="today num" id="todayLabel"></span>
+    <span class="pill ok" id="auditPill" onclick="show('ov')">账核对中…</span>
+    <button class="btn-speak" id="btnSpeak" onclick="toggleSpeak()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l6 5V4L8 9H4zm13.5 3a3.5 3.5 0 0 0-2-3.15v6.3a3.5 3.5 0 0 0 2-3.15zm-2-8.6v2.1a6.5 6.5 0 0 1 0 13v2.1a8.6 8.6 0 0 0 0-17.2z"/></svg>
+      听汇报</button>
+  </div>
+</div></header>
+
+<main>
+<!-- ⓪ 今日总览 -->
+<section class="page on" id="page-ov">
+  <div class="next" id="nextBanner" style="display:none"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="cols">
+    <div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">替您备好的账</span>
+          <span class="card-s">数量照确认单、单价照上回,机器都填好了——扫一眼,没错就去挂账</span></div>
+        <div class="card-b" id="prepList"></div>
+      </div>
+      <div class="card" id="debtCard" style="display:none">
+        <div class="card-h"><span class="card-t">该催的账</span><span class="card-s">按欠得久不久排,黄提一嘴、红要催</span></div>
+        <div class="card-b" id="debtList"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">七天送货走势</span><span class="card-s" id="sparkSum"></span></div>
+        <div class="card-b"><div class="spark" id="spark"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">账目六项交叉验证</span>
+          <a class="jump" style="margin-left:auto;font-size:13px" onclick="loadOverview(true)">再查一遍</a></div>
+        <div class="card-b" id="auditList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ① 今晚要办 -->
+<section class="page" id="page-in">
+  <div class="cols">
+    <div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">把订货消息贴进来</span>
+          <span class="card-s">微信里整段复制(语音先转文字),多家一起贴也行</span></div>
+        <div class="card-b">
+          <textarea id="paste" placeholder="例:&#10;佳湘小厨&#10;姜三斤&#10;烧鸡两只&#10;东北家常菜 小油菜1斤 黄瓜2斤"></textarea>
+          <div class="grp-f" style="border:0;padding:10px 0 0">
+            <button class="btn" id="btnSplit" onclick="splitIt()">拆单进清单</button>
+            <span class="note" id="pasteMsg"></span>
+          </div>
+          <div class="note" style="margin-top:6px">拿不准的会<b>标红置顶,改好才能确认</b>——错单过不了这道门。</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">需求清单</span><span class="card-s">按店归组,标红的排最前</span></div>
+        <div class="card-b" id="list"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 记账台 -->
+<section class="page" id="page-bk">
+  <div class="card">
+    <div class="card-h"><span class="card-t">记账台</span>
+      <span class="card-s">实称、单价都替您填好了(单价按上回);改哪格点哪格,一键记回执挂账,日账单自动生成</span></div>
+    <div class="card-b" id="booking"></div>
+  </div>
+</section>
+
+<!-- ③ 客户的账 -->
+<section class="page" id="page-ac">
+  <div class="card">
+    <div class="card-h"><span class="card-t">客户的账</span>
+      <span class="card-s">按欠款从多到少排;点开任何一家看「往来账」——每笔钱都挂着单据,机器页页核对</span></div>
+    <div class="card-b" id="accounts"></div>
+  </div>
+</section>
+</main>
+
+<div class="brief" id="brief">
+  <div class="bt"><span>今日汇报</span><button class="close" onclick="hideBrief()">收起 ✕</button></div>
+  <div class="bx num" id="briefText"></div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+/* 体验版引擎:app/core 真内核原样打包(tools/build-demo.js 生成,勿手改) */
+(function () {
+  /* MemoryStore 用 Node 的 setImmediate 模拟网络往返;浏览器里用微任务顶上 */
+  if (typeof setImmediate === 'undefined') {
+    window.setImmediate = function (fn) { return queueMicrotask(fn); };
+  }
+  var __defs = {}, __cache = {};
+  function __def(name, fn) { __defs[name] = fn; }
+  function __req(name) {
+    name = String(name).replace(/^\.\//, '');
+    if (__cache[name]) return __cache[name].exports;
+    var m = { exports: {} };
+    __cache[name] = m;
+    __defs[name].call(null, m, m.exports, __req);
+    return m.exports;
+  }
+__def("money", function (module, exports, require) {
+'use strict';
+// 金额铁律(design/07 四.工程铁律):一律以"分"为单位的整数参与运算,浮点禁止进账务路径。
+
+class MoneyError extends Error {}
+
+function assertCents(n, label) {
+  if (!Number.isInteger(n)) {
+    throw new MoneyError(`金额必须是整数分: ${label || ''}=${n}`);
+  }
+  return n;
+}
+
+// "3.1" / "3.10" / 3.1 / "3" → 310/310/310/300。只保留两位小数,多余位直接拒绝。
+function toCents(v) {
+  const s = String(v).trim();
+  const m = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(s);
+  if (!m) throw new MoneyError(`无法解析金额: ${v}`);
+  const sign = m[1] === '-' ? -1 : 1;
+  const yuan = parseInt(m[2], 10);
+  const frac = m[3] ? parseInt(m[3].padEnd(2, '0'), 10) : 0;
+  return sign * (yuan * 100 + frac);
+}
+
+// 实称数量×单价(分)→金额(分):数量可带小数(实称2.8斤),按千分位整数化后相乘取整,
+// 杜绝浮点误差(23.7×1.9元=45.03 必须分毫不差——妹妹笔记本上的真实算式)。
+function mulQty(unitPriceCents, qty) {
+  assertCents(unitPriceCents, 'unitPriceCents');
+  if (typeof qty !== 'number' || !(qty > 0)) throw new MoneyError(`数量非法: ${qty}`);
+  const qtyMil = Math.round(qty * 1000);
+  if (Math.abs(qtyMil - qty * 1000) > 0.001) throw new MoneyError(`数量最多三位小数: ${qty}`);
+  return Math.round((qtyMil * unitPriceCents) / 1000);
+}
+
+function formatYuan(cents) {
+  assertCents(cents, 'formatYuan');
+  const sign = cents < 0 ? '-' : '';
+  const abs = Math.abs(cents);
+  return `${sign}${Math.floor(abs / 100)}.${String(abs % 100).padStart(2, '0')}`;
+}
+
+module.exports = { MoneyError, assertCents, toCents, formatYuan, mulQty };
+
+});
+__def("store-memory", function (module, exports, require) {
+'use strict';
+// 内存存储适配器:模拟云开发文档型数据库的三个关键性质,供内核逻辑压测——
+// ① 无自增序列;② 乐观并发(版本 CAS);③ 唯一索引冲突报错。
+// 生产环境换成云开发/MySQL 适配器,内核代码不变(design/02 存储抽象承诺)。
+
+class DuplicateKeyError extends Error {}
+class ConflictError extends Error {}
+class NotFoundError extends Error {}
+
+const tick = () => new Promise((r) => setImmediate(r));
+
+class MemoryStore {
+  constructor() {
+    this.colls = new Map();
+    this.uniques = new Map(); // coll -> [fields[]]
+    this.idx = new Map(); // idxName -> Map(ukey -> id)
+    this._seq = 0;
+  }
+
+  _coll(name) {
+    if (!this.colls.has(name)) this.colls.set(name, new Map());
+    return this.colls.get(name);
+  }
+
+  ensureUniqueIndex(coll, fields) {
+    const list = this.uniques.get(coll) || [];
+    list.push(fields);
+    this.uniques.set(coll, list);
+  }
+
+  _ukey(fields, doc) {
+    return fields.map((f) => String(doc[f])).join('\x00');
+  }
+
+  async insert(coll, doc) {
+    await tick(); // 模拟网络往返,制造并发交错
+    const c = this._coll(coll);
+    const id = doc.id != null ? String(doc.id) : `auto_${++this._seq}`;
+    if (c.has(id)) throw new DuplicateKeyError(`${coll} 主键重复: ${id}`);
+    // 唯一索引检查与写入必须在同一同步段内完成(等价于数据库的原子约束)
+    const claims = [];
+    for (const fields of this.uniques.get(coll) || []) {
+      const idxName = `${coll}|${fields.join(',')}`;
+      if (!this.idx.has(idxName)) this.idx.set(idxName, new Map());
+      const m = this.idx.get(idxName);
+      const k = this._ukey(fields, doc);
+      if (m.has(k)) throw new DuplicateKeyError(`${coll} 唯一索引冲突: ${fields.join(',')}=${k}`);
+      claims.push([m, k]);
+    }
+    for (const [m, k] of claims) m.set(k, id);
+    const stored = { ...doc, id, _v: 1, _seq: ++this._seq };
+    c.set(id, stored);
+    return { ...stored };
+  }
+
+  async get(coll, id) {
+    await tick();
+    const doc = this._coll(coll).get(String(id));
+    return doc ? { ...doc } : null;
+  }
+
+  // 乐观并发更新:版本不符即冲突,由调用方重试(取号协议依赖此语义)
+  async cas(coll, id, expectedV, patch) {
+    await tick();
+    const c = this._coll(coll);
+    const doc = c.get(String(id));
+    if (!doc) throw new NotFoundError(`${coll}/${id}`);
+    if (doc._v !== expectedV) throw new ConflictError(`${coll}/${id} 版本冲突`);
+    const next = { ...doc, ...patch, _v: doc._v + 1, _seq: ++this._seq };
+    c.set(String(id), next);
+    return { ...next };
+  }
+
+  // 查询对象(可直译为 SQL WHERE):{ eq: {field: value}, in: {field: [values]}, range: {field, from, to} }
+  async find(coll, query = {}) {
+    await tick();
+    const { eq = {}, in: inQ = {}, range } = query;
+    const out = [];
+    for (const doc of this._coll(coll).values()) {
+      let hit = true;
+      for (const [f, v] of Object.entries(eq)) if (doc[f] !== v) { hit = false; break; }
+      if (hit) for (const [f, vs] of Object.entries(inQ)) if (!vs.includes(doc[f])) { hit = false; break; }
+      if (hit && range) {
+        const v = doc[range.field];
+        if (range.from != null && v < range.from) hit = false;
+        if (range.to != null && v > range.to) hit = false;
+      }
+      if (hit) out.push({ ...doc });
+    }
+    out.sort((a, b) => a._seq - b._seq);
+    return out;
+  }
+}
+
+module.exports = { MemoryStore, DuplicateKeyError, ConflictError, NotFoundError };
+
+});
+__def("numbering", function (module, exports, require) {
+'use strict';
+// 账务内核之一:取号协议(design/05 包5、design/06 模块1)。
+// 计数器文档 CAS 自增 + 已发单号唯一索引双保险;序号4位;并发冲突重试,重试超限报错而不发重号。
+// 单号规则:前缀+日期+4位序号,如 HZ20260801-0001 / RZ20260801-0012 / DZ202607-0003。
+
+const { DuplicateKeyError, ConflictError } = require('./store-memory');
+
+const MAX_RETRY = 200; // 压测目标:100 并发零重号;冲突重试的代价是延迟,绝不是重号
+
+function initNumbering(store) {
+  // 单号在租户内唯一:不同门店各自都有 RZ20260801-0001,互不相干
+  store.ensureUniqueIndex('doc_numbers', ['tenantId', 'no']);
+}
+
+async function nextNo(store, { tenantId, prefix, dateKey }) {
+  if (!tenantId || !prefix || !dateKey) throw new Error('取号参数不全');
+  const counterId = `${tenantId}|${prefix}|${dateKey}`;
+  for (let attempt = 0; attempt < MAX_RETRY; attempt++) {
+    let counter = await store.get('counters', counterId);
+    if (!counter) {
+      try {
+        counter = await store.insert('counters', { id: counterId, n: 0 });
+      } catch (e) {
+        if (!(e instanceof DuplicateKeyError)) throw e;
+        counter = await store.get('counters', counterId);
+      }
+    }
+    try {
+      const updated = await store.cas('counters', counterId, counter._v, { n: counter.n + 1 });
+      const no = `${prefix}${dateKey}-${String(updated.n).padStart(4, '0')}`;
+      // 双保险:哪怕计数器出错,唯一索引也绝不放过重号
+      await store.insert('doc_numbers', { no, tenantId, prefix, dateKey });
+      return no;
+    } catch (e) {
+      if (e instanceof ConflictError || e instanceof DuplicateKeyError) continue;
+      throw e;
+    }
+  }
+  throw new Error(`取号重试超限(${MAX_RETRY}次): ${counterId}`);
+}
+
+module.exports = { initNumbering, nextNo };
+
+});
+__def("balance", function (module, exports, require) {
+'use strict';
+// 账务内核之二:应收流水 + 物化余额 + 重算校验(design/05 包5、design/06 模块9)。
+// 规矩:流水只追加不修改;余额是流水的物化结果;每夜全量重算比对,不平即报警,以流水为准修复。
+// direction 抽象(design/08):receivable=对客户应收,payable=对供应商应付,同一引擎。
+
+const { assertCents } = require('./money');
+const { ConflictError } = require('./store-memory');
+
+const ENTRY_TYPES = new Set(['delivery', 'payment', 'adjust', 'opening']);
+
+function balanceId(tenantId, direction, partyId) {
+  return `${tenantId}|${direction}|${partyId}`;
+}
+
+// 追加一条流水并同步维护物化余额。
+// delivery/opening 为正、payment 为负、adjust 正负皆可且必附 reason+operator(design/07 缺口③)。
+async function applyEntry(store, entry) {
+  const { tenantId, partyId, type, amountCents, refType, refId, bizDate } = entry;
+  const direction = entry.direction || 'receivable';
+  if (!tenantId || !partyId || !bizDate) throw new Error('流水参数不全');
+  if (!ENTRY_TYPES.has(type)) throw new Error(`未知流水类型: ${type}`);
+  assertCents(amountCents, 'entry.amountCents');
+  if ((type === 'delivery' || type === 'opening') && amountCents <= 0) {
+    throw new Error(`${type} 流水金额必须为正`);
+  }
+  if (type === 'payment' && amountCents >= 0) throw new Error('payment 流水金额必须为负');
+  if (type === 'adjust' && (!entry.reason || !entry.operator)) {
+    throw new Error('调整分录必须附原因与经手人');
+  }
+  if (!refType || refId == null) throw new Error('流水必须带 refType/refId,张张有据');
+
+  const stored = await store.insert('entries', {
+    tenantId, direction, partyId, type, amountCents,
+    refType, refId, bizDate,
+    reason: entry.reason || null, operator: entry.operator || null, memo: entry.memo || null,
+  });
+
+  // 物化余额 CAS 重试
+  const bid = balanceId(tenantId, direction, partyId);
+  for (let i = 0; i < 50; i++) {
+    const bal = await store.get('balances', bid);
+    if (!bal) {
+      try {
+        await store.insert('balances', { id: bid, tenantId, direction, partyId, cents: amountCents });
+        return stored;
+      } catch (e) { continue; }
+    }
+    try {
+      await store.cas('balances', bid, bal._v, { cents: bal.cents + amountCents });
+      return stored;
+    } catch (e) {
+      if (e instanceof ConflictError) continue;
+      throw e;
+    }
+  }
+  throw new Error('余额更新重试超限');
+}
+
+async function getBalance(store, tenantId, partyId, direction = 'receivable') {
+  const bal = await store.get('balances', balanceId(tenantId, direction, partyId));
+  return bal ? bal.cents : 0;
+}
+
+// 夜间重算校验:逐户以流水求和比对物化余额;不平返回报警清单;repair=true 时以流水为准修复。
+async function recalcAndVerify(store, tenantId, { repair = false } = {}) {
+  const entries = await store.find('entries', { eq: { tenantId } });
+  const computed = new Map();
+  for (const e of entries) {
+    const bid = balanceId(e.tenantId, e.direction, e.partyId);
+    computed.set(bid, (computed.get(bid) || 0) + e.amountCents);
+  }
+  const balances = await store.find('balances', { eq: { tenantId } });
+  const seen = new Set();
+  const mismatches = [];
+  for (const b of balances) {
+    seen.add(b.id);
+    const expect = computed.get(b.id) || 0;
+    if (expect !== b.cents) {
+      mismatches.push({ balanceId: b.id, materialized: b.cents, computed: expect });
+      if (repair) await store.cas('balances', b.id, b._v, { cents: expect });
+    }
+  }
+  for (const [bid, expect] of computed) {
+    if (!seen.has(bid) && expect !== 0) {
+      mismatches.push({ balanceId: bid, materialized: null, computed: expect });
+    }
+  }
+  return mismatches;
+}
+
+module.exports = { applyEntry, getBalance, recalcAndVerify, balanceId };
+
+});
+__def("allocation", function (module, exports, require) {
+'use strict';
+// 账务内核之三:收款分配(design/05 包5、design/06 模块9)。
+// payment_allocation 表记录"哪笔钱冲了哪笔货":FIFO 自动分配最老未清送货分录,
+// 多付/凑整自动挂预收;账龄按"最老一笔未冲清的送货"起算——色条因此可计算(回应 design/04 技术#七)。
+
+const { assertCents } = require('./money');
+const { applyEntry } = require('./balance');
+
+async function openDeliveries(store, tenantId, partyId, direction = 'receivable') {
+  const entries = await store.find('entries', {
+    eq: { tenantId, direction, partyId }, in: { type: ['delivery', 'opening'] },
+  });
+  const allocs = await store.find('allocations', { eq: { tenantId, direction, partyId } });
+  const allocatedBy = new Map();
+  for (const a of allocs) {
+    if (a.entryId != null) allocatedBy.set(a.entryId, (allocatedBy.get(a.entryId) || 0) + a.amountCents);
+  }
+  entries.sort((a, b) => (a.bizDate < b.bizDate ? -1 : a.bizDate > b.bizDate ? 1 : a._seq - b._seq));
+  return entries
+    .map((e) => ({ entry: e, openCents: e.amountCents - (allocatedBy.get(e.id) || 0) }))
+    .filter((x) => x.openCents > 0);
+}
+
+// 记一笔收款:写 payment 流水(负数) + FIFO 分配 + 余款挂预收。
+async function recordPayment(store, { tenantId, partyId, amountCents, method, refId, bizDate, direction = 'receivable' }) {
+  assertCents(amountCents, 'payment.amountCents');
+  if (amountCents <= 0) throw new Error('收款金额必须为正');
+  const paymentEntry = await applyEntry(store, {
+    tenantId, direction, partyId, type: 'payment', amountCents: -amountCents,
+    refType: 'payment', refId: refId != null ? refId : `pay_${bizDate}`, bizDate, memo: method || null,
+  });
+
+  let remain = amountCents;
+  const made = [];
+  for (const { entry, openCents } of await openDeliveries(store, tenantId, partyId, direction)) {
+    if (remain <= 0) break;
+    const take = Math.min(openCents, remain);
+    const a = await store.insert('allocations', {
+      tenantId, direction, partyId, paymentEntryId: paymentEntry.id, entryId: entry.id,
+      amountCents: take, kind: 'fifo',
+    });
+    made.push(a);
+    remain -= take;
+  }
+  if (remain > 0) {
+    const a = await store.insert('allocations', {
+      tenantId, direction, partyId, paymentEntryId: paymentEntry.id, entryId: null,
+      amountCents: remain, kind: 'prepay',
+    });
+    made.push(a);
+  }
+  return { paymentEntry, allocations: made, prepayCents: remain };
+}
+
+// 老板手工改分配(design/06 模块9 分配调整):整笔收款的分配重来,总额不得超过收款额,全程留痕由调用方记 audit。
+async function reallocatePayment(store, { tenantId, partyId, paymentEntryId, allocations, direction = 'receivable' }) {
+  const payment = await store.get('entries', paymentEntryId);
+  if (!payment || payment.type !== 'payment') throw new Error('收款流水不存在');
+  const total = allocations.reduce((s, a) => s + assertCents(a.amountCents, 'realloc'), 0);
+  if (total !== -payment.amountCents) throw new Error('分配合计必须等于收款金额');
+  const olds = await store.find('allocations', { eq: { paymentEntryId } });
+  for (const o of olds) await store.cas('allocations', o.id, o._v, { voided: true, amountCents: 0 });
+  const made = [];
+  for (const a of allocations) {
+    made.push(await store.insert('allocations', {
+      tenantId, direction, partyId, paymentEntryId,
+      entryId: a.entryId != null ? a.entryId : null,
+      amountCents: a.amountCents, kind: a.entryId != null ? 'manual' : 'prepay',
+    }));
+  }
+  return made;
+}
+
+// 账龄:最老未冲清送货分录距今天数 → 三色(design/01 屏8:绿<30 / 黄30-60 / 红>60)。
+function daysBetween(from, to) {
+  return Math.floor((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000);
+}
+
+async function aging(store, { tenantId, partyId, today, direction = 'receivable' }) {
+  const open = await openDeliveries(store, tenantId, partyId, direction);
+  if (open.length === 0) return { days: 0, bucket: 'green', oldestEntryId: null };
+  const oldest = open[0];
+  const days = daysBetween(oldest.entry.bizDate, today);
+  const bucket = days > 60 ? 'red' : days >= 30 ? 'yellow' : 'green';
+  return { days, bucket, oldestEntryId: oldest.entry.id };
+}
+
+module.exports = { recordPayment, reallocatePayment, aging, openDeliveries };
+
+});
+__def("statement", function (module, exports, require) {
+'use strict';
+// 账务内核之四:日账单(RZ)/结算单(DZ)快照(design/07 三、design/08 四)。
+// 三层单据链:回执(HZ,单笔凭据)→日账单(RZ,当日按户汇总,确认主战场)→结算单(DZ,周期请款)。
+// 规矩:幂等键 (tenant, party, kind, periodKey);生成即快照冻结;明细行只有四种类型;
+// 确认留证(谁、何时)或默认生效留证;结算单争议率≈0 是靶——结算单上不许出现第一次见到的数字。
+
+const { nextNo } = require('./numbering');
+
+const LINE_LABEL = { delivery: '送货', payment: '收款', adjust: '调整', opening: '期初' };
+
+function stmtKey(tenantId, partyId, kind, periodKey) {
+  return `${tenantId}|${partyId}|${kind}|${periodKey}`;
+}
+
+// kind: 'RZ'(日账单,periodKey=YYYYMMDD)| 'DZ'(结算单,periodKey 如 202607 或区间)| 'QC'(期初确认单)
+async function generateStatement(store, {
+  tenantId, partyId, kind, periodKey, from, to, openingCents, direction = 'receivable',
+}) {
+  const key = stmtKey(tenantId, partyId, kind, periodKey);
+  const existing = await store.get('statements', key);
+  if (existing) return { stmt: existing, created: false };
+
+  const entries = (await store.find('entries', {
+    eq: { tenantId, direction, partyId },
+    range: { field: 'bizDate', from, to },
+  })).filter((e) => e.type !== 'opening');
+
+  let deliveryCents = 0; let paidCents = 0; let adjustCents = 0;
+  const lines = [];
+  for (const e of entries) {
+    if (e.type === 'adjust' && (!e.reason || !e.operator)) {
+      throw new Error(`调整分录缺原因/经手人,拒绝出单: entry ${e.id}`);
+    }
+    if (e.type === 'delivery') deliveryCents += e.amountCents;
+    else if (e.type === 'payment') paidCents += -e.amountCents;
+    else if (e.type === 'adjust') adjustCents += e.amountCents;
+    lines.push({
+      bizDate: e.bizDate,
+      type: e.type,
+      label: LINE_LABEL[e.type],
+      amountCents: e.amountCents,
+      refType: e.refType,
+      refId: e.refId,
+      note: e.type === 'adjust' ? `${e.reason}(经手:${e.operator})` : (e.memo || ''),
+    });
+  }
+  const closingCents = openingCents + deliveryCents + adjustCents - paidCents;
+
+  const no = await nextNo(store, { tenantId, prefix: kind, dateKey: periodKey });
+  try {
+    const stmt = await store.insert('statements', {
+      id: key, no, tenantId, direction, partyId, kind, periodKey, from, to,
+      openingCents, deliveryCents, adjustCents, paidCents, closingCents,
+      lines, status: 'generated', confirmedAt: null, confirmedBy: null,
+      promisedPayDate: null, disputeMemo: null,
+    });
+    return { stmt, created: true };
+  } catch (e) {
+    const raced = await store.get('statements', key); // 并发生成:幂等返回已有快照
+    if (raced) return { stmt: raced, created: false };
+    throw e;
+  }
+}
+
+// 表态闭环:确认(【看过了,没问题】)/ 默认生效(逾期未回应)/ 异议——全部留证。
+async function markStatement(store, key, action, { by, at, memo, promisedPayDate } = {}) {
+  const stmt = await store.get('statements', key);
+  if (!stmt) throw new Error(`单据不存在: ${key}`);
+  const patch = {};
+  if (action === 'confirm') {
+    Object.assign(patch, { status: 'confirmed', confirmedBy: by || null, confirmedAt: at });
+  } else if (action === 'default_confirm') {
+    Object.assign(patch, { status: 'default_confirmed', confirmedAt: at });
+  } else if (action === 'dispute') {
+    Object.assign(patch, { status: 'disputed', disputeMemo: memo || '' });
+  } else {
+    throw new Error(`未知动作: ${action}`);
+  }
+  if (promisedPayDate) patch.promisedPayDate = promisedPayDate;
+  return store.cas('statements', key, stmt._v, patch);
+}
+
+// 结算单聚合校验:DZ 期内每个有流水的日子都应存在已表态的 RZ——
+// "结算单上不许出现第一次见到的数字"落成可执行检查(design/08 四)。
+async function settlementReadiness(store, { tenantId, partyId, from, to }) {
+  const entries = await store.find('entries', {
+    eq: { tenantId, partyId, type: 'delivery' },
+    range: { field: 'bizDate', from, to },
+  });
+  const days = [...new Set(entries.map((e) => e.bizDate))];
+  const missing = []; const unsettled = [];
+  for (const d of days) {
+    const key = stmtKey(tenantId, partyId, 'RZ', d.replaceAll('-', ''));
+    const rz = await store.get('statements', key);
+    if (!rz) missing.push(d);
+    else if (rz.status !== 'confirmed' && rz.status !== 'default_confirmed') unsettled.push(d);
+  }
+  return { ready: missing.length === 0 && unsettled.length === 0, missingDailyStatements: missing, unconfirmedDailyStatements: unsettled };
+}
+
+// 结算单极简视图(design/14 修订④,照抄实物月账页):"日期=金额"逐日清单+合计;
+// 收款另行小计。客户看惯的就是这个样子,四段式数字只作附注。
+async function monthlyView(store, { tenantId, partyId, from, to, direction = 'receivable' }) {
+  const entries = await store.find('entries', {
+    eq: { tenantId, direction, partyId },
+    range: { field: 'bizDate', from, to },
+  });
+  const byDay = new Map();
+  let paidCents = 0;
+  for (const e of entries) {
+    if (e.type === 'opening') continue;
+    if (e.type === 'payment') { paidCents += -e.amountCents; continue; }
+    byDay.set(e.bizDate, (byDay.get(e.bizDate) || 0) + e.amountCents);
+  }
+  const days = [...byDay.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([date, cents]) => ({ date, cents }));
+  const totalCents = days.reduce((s, d) => s + d.cents, 0);
+  return { days, totalCents, paidCents };
+}
+
+module.exports = { generateStatement, markStatement, settlementReadiness, monthlyView, stmtKey };
+
+});
+__def("delivery", function (module, exports, require) {
+'use strict';
+// 明细行回执(design/14 修订①③④):行格式照抄店里笔记本——品名|要货数|实称数|单价|金额,
+// 金额一律服务端确定性计算(mulQty,分位取整);差异闸门:diff=true 只存回执不挂账,
+// 待老板娘改账确认(confirmHeldReceipt)后才生成应收与电子单。
+
+const { mulQty, assertCents } = require('./money');
+const { nextNo } = require('./numbering');
+const { applyEntry } = require('./balance');
+
+function buildLines(items) {
+  if (!Array.isArray(items) || items.length === 0) throw new Error('回执必须有明细行');
+  return items.map((it) => {
+    if (!it.name) throw new Error('明细缺品名');
+    assertCents(it.unitPriceCents, `${it.name}.unitPriceCents`);
+    const qty = it.qtyActual != null ? it.qtyActual : it.qtyOrdered; // 不称重品:实发=要货
+    const amountCents = mulQty(it.unitPriceCents, qty);
+    return {
+      name: it.name,
+      qtyOrdered: it.qtyOrdered != null ? it.qtyOrdered : qty,
+      qtyActual: qty,
+      unit: it.unit || null,
+      unitPriceCents: it.unitPriceCents,
+      amountCents,
+    };
+  });
+}
+
+async function postDeliveryReceipt(store, {
+  tenantId, partyId, bizDate, dateKey, items, diff = false, signer, photoKey, direction = 'receivable',
+}) {
+  const lines = buildLines(items);
+  const amountCents = lines.reduce((s, l) => s + l.amountCents, 0);
+  const receiptNo = await nextNo(store, { tenantId, prefix: 'HZ', dateKey });
+  const receipt = await store.insert('receipts', {
+    tenantId, direction, partyId, receiptNo, bizDate,
+    items: lines, amountCents, held: !!diff,
+    signer: signer || null, photoKey: photoKey || null,
+  });
+  if (!diff) {
+    await applyEntry(store, {
+      tenantId, direction, partyId, type: 'delivery', amountCents,
+      refType: 'receipt', refId: receiptNo, bizDate,
+    });
+  }
+  return { receipt, amountCents, held: !!diff };
+}
+
+// 老板娘处理"有改动"单:按实际改后的明细重算、落账;回执从挂起转生效,改动留在明细里
+async function confirmHeldReceipt(store, receiptId, { items, direction = 'receivable' }) {
+  const receipt = await store.get('receipts', receiptId);
+  if (!receipt) throw new Error('回执不存在');
+  if (!receipt.held) throw new Error('该回执不是挂起状态');
+  const lines = buildLines(items || receipt.items);
+  const amountCents = lines.reduce((s, l) => s + l.amountCents, 0);
+  const updated = await store.cas('receipts', receiptId, receipt._v, {
+    items: lines, amountCents, held: false,
+  });
+  await applyEntry(store, {
+    tenantId: receipt.tenantId, direction, partyId: receipt.partyId,
+    type: 'delivery', amountCents, refType: 'receipt', refId: receipt.receiptNo,
+    bizDate: receipt.bizDate,
+  });
+  return { receipt: updated, amountCents };
+}
+
+module.exports = { postDeliveryReceipt, confirmHeldReceipt, buildLines };
+
+});
+__def("intake", function (module, exports, require) {
+'use strict';
+// 收单箱(design/15):任何渠道到达的订货文本(PC粘贴/剪贴板监听/公众号消息/OCR结果)
+// 统一进这里,拆单成"需求 todolist"——按客户归组、逐条待确认;拿不准标红待核,绝不猜。
+// 渠道只负责把话送到,转换与确认永远走同一条链:text → splitPaste → intake → 确认 → 订单。
+
+const { splitPaste } = require('./splitter');
+
+// 从档案表构造拆单器需要的客户形态(共享目录;客户级常用品对照表是后续细化)
+async function loadSplitterCustomers(store, tenantId) {
+  const customers = await store.find('customers', { eq: { tenantId } });
+  const products = await store.find('products', { eq: { tenantId } });
+  const catalog = products.map((p) => ({
+    sku: p.id, phrase: p.name, spec: p.spec || '', unit: p.unit,
+  }));
+  return customers.map((c) => ({
+    id: c.id, name: c.name, wxRemark: c.wxRemark || null, aliases: c.aliases || [], catalog,
+  }));
+}
+
+// 一次粘贴/一条消息 → 若干 intake 条目(每客户一条,含明细行)
+// source: paste-pc / paste-mobile / clipboard-watch / mp-message(公众号) / ocr
+async function createIntakeFromText(store, { tenantId, text, source, bizDate, llmSplit }) {
+  if (!text || !String(text).trim()) throw new Error('空文本');
+  const customers = await loadSplitterCustomers(store, tenantId);
+  const result = llmSplit
+    ? await llmSplit(text, customers)          // AI 拆单(splitter-ai,自带幻觉拦截与规则回退)
+    : splitPaste(text, customers);             // 规则拆单
+  const created = [];
+  for (const o of result.orders) {
+    created.push(await store.insert('intakes', {
+      tenantId, bizDate: bizDate || null, source: source || 'paste-pc',
+      partyId: o.customerId, customerName: o.customerName,
+      lines: o.lines, rawText: text.length > 2000 ? text.slice(0, 2000) : text,
+      status: o.flagged ? 'flagged' : 'pending',  // flagged=有标红待核 / pending=待确认
+    }));
+  }
+  const unassigned = result.unassigned || [];
+  return { created, unassignedLines: unassigned, engine: result.engine || 'rules' };
+}
+
+// 今日需求 todolist:按客户归组,标红的排最前(先处理拿不准的)。
+// 白名单过滤:只有 pending/flagged 算待办——booked(已开单)绝不能回流,否则会被再确认、再挂账。
+async function getTodolist(store, { tenantId, bizDate }) {
+  const q = { eq: { tenantId } };
+  const all = (await store.find('intakes', q))
+    .filter((it) => it.status === 'pending' || it.status === 'flagged')
+    .filter((it) => !bizDate || !it.bizDate || it.bizDate === bizDate);
+  const groups = new Map();
+  for (const it of all) {
+    const key = it.partyId || `?${it.customerName}`;
+    if (!groups.has(key)) groups.set(key, { partyId: it.partyId, customerName: it.customerName, items: [] });
+    groups.get(key).items.push(it);
+  }
+  const list = [...groups.values()];
+  list.sort((a, b) => {
+    const af = a.items.some((i) => i.status === 'flagged') ? 0 : 1;
+    const bf = b.items.some((i) => i.status === 'flagged') ? 0 : 1;
+    return af - bf;
+  });
+  return list;
+}
+
+// 确认一条(可携改正后的明细——标红行改好了才许确认)
+async function confirmIntake(store, intakeId, { lines, partyId } = {}) {
+  const it = await store.get('intakes', intakeId);
+  if (!it) throw new Error('收单条目不存在');
+  if (it.status !== 'pending' && it.status !== 'flagged') {
+    throw new Error(`该条目已${it.status === 'booked' ? '开单挂账' : '处理过'},不能再确认`);
+  }
+  const finalLines = lines || it.lines;
+  if (finalLines.some((l) => l.flagged)) throw new Error('仍有标红行未处理,不能确认');
+  const finalParty = partyId || it.partyId;
+  if (!finalParty) throw new Error('客户未指定,不能确认');
+  return store.cas('intakes', intakeId, it._v, {
+    lines: finalLines, partyId: finalParty, status: 'confirmed',
+  });
+}
+
+// 已确认清单(记账台的输入:今晚确认过的需求,等着实称记价挂账)
+async function getConfirmed(store, { tenantId, bizDate }) {
+  const all = (await store.find('intakes', { eq: { tenantId, status: 'confirmed' } }))
+    .filter((it) => !bizDate || !it.bizDate || it.bizDate === bizDate);
+  const groups = new Map();
+  for (const it of all) {
+    const key = it.partyId;
+    if (!groups.has(key)) groups.set(key, { partyId: it.partyId, customerName: it.customerName, items: [] });
+    groups.get(key).items.push(it);
+  }
+  return [...groups.values()];
+}
+
+// 已开单(回执落账后,需求条目转 booked,不再出现在任何清单)
+async function bookIntake(store, intakeId, { receiptNo } = {}) {
+  const it = await store.get('intakes', intakeId);
+  if (!it) throw new Error('收单条目不存在');
+  if (it.status !== 'confirmed') throw new Error('只有已确认的条目才能转开单');
+  return store.cas('intakes', intakeId, it._v, { status: 'booked', receiptNo: receiptNo || null });
+}
+
+// 作废(重复/玩笑/撤单)
+async function dismissIntake(store, intakeId, reason) {
+  const it = await store.get('intakes', intakeId);
+  if (!it) throw new Error('收单条目不存在');
+  if (it.status === 'booked') throw new Error('该条目已开单挂账,要撤请先冲回执,不能直接作废');
+  return store.cas('intakes', intakeId, it._v, { status: 'dismissed', dismissReason: reason || null });
+}
+
+module.exports = {
+  createIntakeFromText, getTodolist, confirmIntake, dismissIntake,
+  getConfirmed, bookIntake, loadSplitterCustomers,
+};
+
+});
+__def("splitter", function (module, exports, require) {
+'use strict';
+// M0 打靶②:批量贴单拆分 POC(design/05 包2)。
+// 规则版:按客户名/微信备注切块 → 常用品对照表翻译 → 数量解析;
+// 铁规:拿不准一律标红(flagged),绝不猜——错归客户必须为零,可疑即弃。
+
+const CN_NUM = { 零: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
+const UNITS = '桶件袋箱瓶斤包提壶盒条只';
+const VAGUE = /[点些]|^几/;
+
+function parseCnNum(s) {
+  if (/^\d+$/.test(s)) return parseInt(s, 10);
+  if (s.length === 1) return CN_NUM[s] ?? null;
+  // 十一~九十九
+  const m = /^([二两三四五六七八九])?十([一二三四五六七八九])?$/.exec(s);
+  if (m) return (m[1] ? CN_NUM[m[1]] : 1) * 10 + (m[2] ? CN_NUM[m[2]] : 0);
+  return null;
+}
+
+// customers: [{id, name, wxRemark, aliases: [], catalog: [{phrase, sku, spec, unit}]}]
+// 最长匹配优先:真实客户名常互为前缀("十六"/"十六对面",design/14),
+// 命中键更长者胜;等长且属不同客户才算歧义("老王"小名同像两家→标红不猜)。
+function matchCustomer(line, customers) {
+  const hits = [];
+  for (const c of customers) {
+    const keys = [c.name, c.wxRemark, ...(c.aliases || [])].filter(Boolean);
+    for (const k of keys) if (line.includes(k)) hits.push({ c, key: k });
+  }
+  if (hits.length === 0) return { customer: null, ambiguous: false };
+  hits.sort((a, b) => b.key.length - a.key.length);
+  const top = hits[0];
+  const rival = hits.find((h) => h.c.id !== top.c.id && h.key.length === top.key.length);
+  if (rival) {
+    const names = [...new Set(hits.filter((h) => h.key.length === top.key.length).map((h) => h.c.name))];
+    return { customer: null, ambiguous: true, candidates: names };
+  }
+  return { customer: top.c, key: top.key, ambiguous: false };
+}
+
+function parseItems(text, catalog) {
+  const tokens = text.split(/[、,,;;\s和]+/).map((t) => t.trim()).filter(Boolean);
+  const lines = [];
+  for (const raw of tokens) {
+    const hit = catalog.find((g) => raw.includes(g.phrase));
+    if (!hit) {
+      lines.push({ raw, flagged: true, reason: '不认识的货,请人工核对' });
+      continue;
+    }
+    if (VAGUE.test(raw.replace(hit.phrase, ''))) {
+      lines.push({ raw, sku: hit.sku, flagged: true, reason: '数量没说清("点/些/几"),请核实' });
+      continue;
+    }
+    const qm = new RegExp(`([0-9]+|[一二两三四五六七八九十]{1,3})\\s*([${UNITS}])?`).exec(raw.replace(hit.phrase, ''));
+    const qty = qm ? parseCnNum(qm[1]) : null;
+    if (qty == null || qty <= 0) {
+      lines.push({ raw, sku: hit.sku, flagged: true, reason: '没听清数量,请核实' });
+      continue;
+    }
+    const unit = (qm && qm[2]) || hit.unit;
+    if (unit !== hit.unit) {
+      lines.push({ raw, sku: hit.sku, qty, unit, flagged: true, reason: `单位"${unit}"与档案"${hit.unit}"不符,请核实` });
+      continue;
+    }
+    lines.push({ raw, sku: hit.sku, spec: hit.spec, qty, unit, flagged: false });
+  }
+  return lines;
+}
+
+// 入口:整段粘贴文本 → 按客户拆块 → 逐块解析。
+// 返回 { orders: [{customerId, customerName, lines, flagged}], unassigned: [...] }
+function splitPaste(text, customers) {
+  const rows = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  const orders = [];
+  const unassigned = [];
+  let current = null;
+
+  for (const row of rows) {
+    const head = matchCustomer(row, customers);
+    if (head.ambiguous) {
+      // 两家都像(老王饺子馆/老王面馆同段):宁可整块标红,绝不猜
+      current = { customerId: null, customerName: row, lines: [], flagged: true, reason: `多家客户名都匹配: ${head.candidates.join(' / ')},请人工指定` };
+      orders.push(current);
+      continue;
+    }
+    if (head.customer) {
+      let rest = row;
+      for (const k of [head.customer.wxRemark, head.customer.name, head.key].filter(Boolean)) rest = rest.split(k).join('');
+      rest = rest.replace(/^[::\s]+/, '');
+      current = { customerId: head.customer.id, customerName: head.customer.name, catalog: head.customer.catalog, lines: [], flagged: false };
+      orders.push(current);
+      if (rest) current.lines.push(...parseItems(rest, head.customer.catalog));
+      continue;
+    }
+    if (current && current.customerId) {
+      current.lines.push(...parseItems(row, current.catalog));
+    } else if (current && current.flagged) {
+      current.lines.push({ raw: row, flagged: true, reason: '归属未定' });
+    } else {
+      unassigned.push(row);
+    }
+  }
+  for (const o of orders) {
+    delete o.catalog;
+    if (o.lines.some((l) => l.flagged)) o.flagged = true;
+  }
+  return { orders, unassigned };
+}
+
+module.exports = { splitPaste, parseCnNum };
+
+});
+__def("prepare", function (module, exports, require) {
+'use strict';
+// 备好引擎(design/17 四条铁律的机制层):
+// 铁律① 系统备好、人只扫一眼确认 → suggestPrices(价格记忆)+ getOverview(今日总览,一切预填);
+// 铁律② 数据汇接、随时调用、交叉验证 → runAudit(六项交叉验证)+ traceCustomer(客户360,每笔钱带单据链);
+// 铁律④ 不想看还能听 → buildBriefing(口语化汇报稿,前端用系统语音念)。
+// 规矩不变:引擎只"备",不"定"——所有落账动作仍必须经人确认,金额一律整数分。
+
+const { mulQty, formatYuan } = require('./money');
+const { recalcAndVerify } = require('./balance');
+
+function addDays(dateStr, delta) {
+  const t = Date.parse(`${dateStr}T00:00:00Z`);
+  return new Date(t + delta * 86400000).toISOString().slice(0, 10);
+}
+
+function sortBySeq(a, b) {
+  return (a.bizDate < b.bizDate ? -1 : a.bizDate > b.bizDate ? 1 : (a._seq || 0) - (b._seq || 0));
+}
+
+/* ---------------- 铁律①:价格记忆 ---------------- */
+// 单价三级记忆:该客户最近一次 → 全店最近一次 → 档案价(salePriceCents>0)。
+// 返回来源与上次日期,前端据此标注"上回价/店里价/档案价",偏差高亮由前端按 refCents 判断。
+async function suggestPrices(store, { tenantId, partyId, names }) {
+  const receipts = (await store.find('receipts', { eq: { tenantId } })).sort(sortBySeq);
+  const products = await store.find('products', { eq: { tenantId } });
+  const byName = new Map(products.map((p) => [p.name, p]));
+  const mine = new Map(); const anyone = new Map(); // name -> {cents, date, qty, party}
+  for (const r of receipts) {
+    for (const l of r.items || []) {
+      const rec = { cents: l.unitPriceCents, date: r.bizDate, qty: l.qtyActual, party: r.partyId };
+      anyone.set(l.name, rec);                       // 越靠后越新,后写覆盖前写
+      if (r.partyId === partyId) mine.set(l.name, rec);
+    }
+  }
+  const out = {};
+  for (const name of names) {
+    if (mine.has(name)) {
+      const m = mine.get(name);
+      out[name] = { cents: m.cents, source: 'customer-last', lastDate: m.date, lastQty: m.qty };
+    } else if (anyone.has(name)) {
+      const a = anyone.get(name);
+      out[name] = { cents: a.cents, source: 'tenant-last', lastDate: a.date, lastQty: a.qty };
+    } else {
+      const p = byName.get(name);
+      out[name] = p && p.salePriceCents > 0
+        ? { cents: p.salePriceCents, source: 'catalog', lastDate: null, lastQty: null }
+        : { cents: null, source: 'none', lastDate: null, lastQty: null };
+    }
+  }
+  return out;
+}
+
+/* ---------------- 铁律②:六项交叉验证 ---------------- */
+// 每一项都是"同一笔钱的两条独立路径必须得出同一个数";任何一项不平都点名到单据号。
+async function runAudit(store, { tenantId }) {
+  const [receipts, entries, allocations, statements, intakes] = await Promise.all([
+    store.find('receipts', { eq: { tenantId } }),
+    store.find('entries', { eq: { tenantId } }),
+    store.find('allocations', { eq: { tenantId } }),
+    store.find('statements', { eq: { tenantId } }),
+    store.find('intakes', { eq: { tenantId } }),
+  ]);
+  const checks = [];
+  const add = (id, name, issues, checked) =>
+    checks.push({ id, name, pass: issues.length === 0, issues, checked });
+
+  // C1 余额↔流水:物化余额必须等于流水逐笔累加(recalcAndVerify 是夜航仪,这里随叫随到)
+  const mismatches = await recalcAndVerify(store, tenantId);
+  add('C1', '余额与流水分毫相符',
+    mismatches.map((m) => `${m.balanceId}:台账 ${m.materialized == null ? '缺' : formatYuan(m.materialized)} ≠ 流水累加 ${formatYuan(m.computed)}`),
+    entries.length);
+
+  // C2 回执明细自洽:每行 金额=实称×单价(分位取整),整单金额=各行之和
+  const c2 = [];
+  for (const r of receipts) {
+    let sum = 0;
+    for (const l of r.items || []) {
+      const expect = mulQty(l.unitPriceCents, l.qtyActual);
+      if (expect !== l.amountCents) c2.push(`${r.receiptNo}「${l.name}」行金额 ${formatYuan(l.amountCents)} ≠ ${l.qtyActual}×${formatYuan(l.unitPriceCents)}`);
+      sum += l.amountCents;
+    }
+    if (sum !== r.amountCents) c2.push(`${r.receiptNo} 整单 ${formatYuan(r.amountCents)} ≠ 各行合计 ${formatYuan(sum)}`);
+  }
+  add('C2', '回执:行金额=实称×单价,整单=各行之和', c2, receipts.length);
+
+  // C3 挂账有据:生效回执 ↔ 应收流水一一对应且金额一致(两边互查,单向缺失都算不平)
+  const c3 = [];
+  const deliveryByRef = new Map();
+  for (const e of entries) {
+    if (e.type === 'delivery' && e.refType === 'receipt') {
+      if (deliveryByRef.has(e.refId)) c3.push(`回执 ${e.refId} 挂了两笔账`);
+      deliveryByRef.set(e.refId, e);
+    }
+  }
+  const receiptNos = new Set();
+  for (const r of receipts) {
+    receiptNos.add(r.receiptNo);
+    if (r.held) continue; // 挂起单本就不该有账
+    const e = deliveryByRef.get(r.receiptNo);
+    if (!e) c3.push(`回执 ${r.receiptNo} 已生效但没挂上账`);
+    else if (e.amountCents !== r.amountCents) c3.push(`回执 ${r.receiptNo} 金额 ${formatYuan(r.amountCents)} ≠ 挂账 ${formatYuan(e.amountCents)}`);
+  }
+  for (const [refId] of deliveryByRef) {
+    if (!receiptNos.has(refId)) c3.push(`流水引用的回执 ${refId} 不存在`);
+  }
+  add('C3', '每笔挂账都有回执,金额一致', c3, deliveryByRef.size);
+
+  // C4 账单快照对得上:期末=期初+送货+调整-收款,且明细行合计与三项分解一致
+  const c4 = [];
+  for (const s of statements) {
+    if (s.closingCents !== s.openingCents + s.deliveryCents + s.adjustCents - s.paidCents) {
+      c4.push(`${s.no} 期末 ${formatYuan(s.closingCents)} ≠ 期初+送货+调整-收款`);
+    }
+    let d = 0, p = 0, adj = 0;
+    for (const l of s.lines || []) {
+      if (l.type === 'delivery') d += l.amountCents;
+      else if (l.type === 'payment') p += -l.amountCents;
+      else if (l.type === 'adjust') adj += l.amountCents;
+    }
+    if (d !== s.deliveryCents || p !== s.paidCents || adj !== s.adjustCents) {
+      c4.push(`${s.no} 明细行合计与汇总数对不上`);
+    }
+  }
+  add('C4', '账单:期末=期初+送货+调整-收款', c4, statements.length);
+
+  // C5 收款核销闭合:每笔收款的核销合计=收款额;任何一笔送货不被多冲
+  const c5 = [];
+  const allocByPayment = new Map(); const allocByEntry = new Map();
+  for (const a of allocations) {
+    if (a.voided) continue;
+    allocByPayment.set(a.paymentEntryId, (allocByPayment.get(a.paymentEntryId) || 0) + a.amountCents);
+    if (a.entryId != null) allocByEntry.set(a.entryId, (allocByEntry.get(a.entryId) || 0) + a.amountCents);
+  }
+  const entryById = new Map(entries.map((e) => [e.id, e]));
+  for (const e of entries) {
+    if (e.type !== 'payment') continue;
+    const got = allocByPayment.get(e.id) || 0;
+    if (got !== -e.amountCents) c5.push(`收款 ${e.refId} 核销 ${formatYuan(got)} ≠ 收款额 ${formatYuan(-e.amountCents)}`);
+  }
+  for (const [entryId, got] of allocByEntry) {
+    const e = entryById.get(entryId);
+    if (!e) c5.push(`核销指向不存在的流水 ${entryId}`);
+    else if (got > e.amountCents) c5.push(`${e.refId} 被多冲:核销 ${formatYuan(got)} > 货款 ${formatYuan(e.amountCents)}`);
+  }
+  add('C5', '每笔收款冲了哪笔货,笔笔闭合', c5, allocByPayment.size);
+
+  // C6 需求闭环:已开单的需求必须落到真实回执号(收单→确认→回执 链条不断)
+  const c6 = [];
+  let booked = 0;
+  for (const it of intakes) {
+    if (it.status !== 'booked') continue;
+    booked++;
+    if (!it.receiptNo) c6.push(`「${it.customerName}」的需求已开单但没记回执号`);
+    else if (!receiptNos.has(it.receiptNo)) c6.push(`「${it.customerName}」的需求指向不存在的回执 ${it.receiptNo}`);
+  }
+  add('C6', '每条要货最终落到回执,链条不断', c6, booked);
+
+  return { ok: checks.every((c) => c.pass), checks };
+}
+
+/* ---------------- 铁律①:今日总览(一切备好,只等扫一眼) ---------------- */
+async function getOverview(store, { tenantId, bizDate, today }) {
+  const day = bizDate;
+  const [customers, products, intakes, receipts, entries, balances] = await Promise.all([
+    store.find('customers', { eq: { tenantId } }),
+    store.find('products', { eq: { tenantId } }),
+    store.find('intakes', { eq: { tenantId } }),
+    store.find('receipts', { eq: { tenantId } }),
+    store.find('entries', { eq: { tenantId } }),
+    store.find('balances', { eq: { tenantId } }),
+  ]);
+  const custName = new Map(customers.map((c) => [c.id, c.name]));
+  const prodBySku = new Map(products.map((p) => [p.id, p]));
+  const lineName = (l) => (l.sku && prodBySku.has(l.sku) ? prodBySku.get(l.sku).name : (l.name || l.raw));
+
+  // 今晚要办:待确认/标红(不限当天的旧欠条也提醒)
+  const open = intakes.filter((it) => it.status === 'pending' || it.status === 'flagged');
+  const flaggedLines = open.reduce((s, it) => s + it.lines.filter((l) => l.flagged).length, 0);
+  const openLines = open.reduce((s, it) => s + it.lines.length, 0);
+
+  // 已确认待记账 → 逐行备好单价(价格记忆),能算的先把金额估出来
+  const confirmed = intakes.filter((it) => it.status === 'confirmed');
+  const groups = new Map();
+  for (const it of confirmed) {
+    if (!groups.has(it.partyId)) groups.set(it.partyId, { partyId: it.partyId, customerName: custName.get(it.partyId) || it.customerName, intakeIds: [], lines: [] });
+    const g = groups.get(it.partyId);
+    g.intakeIds.push(it.id);
+    for (const l of it.lines) g.lines.push({ raw: l.raw, sku: l.sku || null, name: lineName(l), qty: l.qty != null ? l.qty : null, unit: l.unit || null });
+  }
+  const prepared = [];
+  for (const g of groups.values()) {
+    const names = [...new Set(g.lines.map((l) => l.name))];
+    const sug = await suggestPrices(store, { tenantId, partyId: g.partyId, names });
+    let estimate = 0; let priced = 0;
+    for (const l of g.lines) {
+      l.suggest = sug[l.name];
+      if (l.suggest.cents != null && typeof l.qty === 'number' && l.qty > 0) {
+        l.estimateCents = mulQty(l.suggest.cents, l.qty); estimate += l.estimateCents; priced++;
+      } else l.estimateCents = null;
+    }
+    prepared.push({ ...g, estimateCents: estimate, pricedLines: priced, totalLines: g.lines.length,
+      allPriced: priced === g.lines.length });
+  }
+  prepared.sort((a, b) => b.estimateCents - a.estimateCents);
+
+  // 今日已挂账/挂起/已收款
+  const todayReceipts = receipts.filter((r) => r.bizDate === day);
+  const bookedCents = todayReceipts.filter((r) => !r.held).reduce((s, r) => s + r.amountCents, 0);
+  const heldCount = receipts.filter((r) => r.held).length; // 挂起单不分日子,悬着就要看见
+  const todayPays = entries.filter((e) => e.type === 'payment' && e.bizDate === day);
+  const paidCents = todayPays.reduce((s, e) => s + -e.amountCents, 0);
+
+  // 应收与账龄警报(账龄逐户算太贵,这里用"最老未清"近似:C5 保证核销闭合,直接由流水推)
+  const { aging } = require('./allocation');
+  const debtors = [];
+  for (const b of balances) {
+    if (b.direction !== 'receivable' || b.cents <= 0) continue;
+    const a = await aging(store, { tenantId, partyId: b.partyId, today });
+    debtors.push({ partyId: b.partyId, name: custName.get(b.partyId) || b.partyId, cents: b.cents, aging: a });
+  }
+  debtors.sort((a, b) => b.cents - a.cents);
+  const receivableCents = debtors.reduce((s, d) => s + d.cents, 0);
+
+  // 七日送货走势(总览小图:生意的脉搏)
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = addDays(day, -i);
+    const cents = entries.filter((e) => e.type === 'delivery' && e.bizDate === d)
+      .reduce((s, e) => s + e.amountCents, 0);
+    last7.push({ date: d, cents });
+  }
+
+  const audit = await runAudit(store, { tenantId });
+  return {
+    bizDate: day,
+    intake: { groupsOpen: open.length, openLines, flaggedLines },
+    prepared,
+    booked: { count: todayReceipts.filter((r) => !r.held).length, cents: bookedCents, heldCount },
+    payments: { count: todayPays.length, cents: paidCents },
+    receivable: { cents: receivableCents, debtors },
+    last7,
+    audit: {
+      ok: audit.ok,
+      passed: audit.checks.filter((c) => c.pass).length,
+      total: audit.checks.length,
+      checks: audit.checks,
+    },
+  };
+}
+
+/* ---------------- 铁律④:口语化汇报稿 ---------------- */
+// 从总览生成一段能念出来的话:先说要办的事,再说钱,最后说账对没对上。
+// 数字念法:分位为零省掉,"320元";有分位说"320元5角3分",绝不念小数点。
+function speakYuan(cents) {
+  const abs = Math.abs(cents);
+  const yuan = Math.floor(abs / 100); const jiao = Math.floor((abs % 100) / 10); const fen = abs % 10;
+  let s = `${yuan}元`;
+  if (jiao && fen) s += `${jiao}角${fen}分`;
+  else if (jiao) s += `${jiao}角`;
+  else if (fen) s += `零${fen}分`; // "320元零3分",绝不念"零角"
+  return (cents < 0 ? '负' : '') + s;
+}
+
+function buildBriefing(overview) {
+  const parts = [];
+  const [, m, d] = overview.bizDate.split('-').map(Number);
+  parts.push(`${m}月${d}号的账,给您念一遍。`);
+
+  const it = overview.intake;
+  if (it.groupsOpen > 0) {
+    let s = `今晚还有${it.groupsOpen}家的要货没确认,一共${it.openLines}样`;
+    s += it.flaggedLines > 0 ? `,其中${it.flaggedLines}样拿不准,已经标红等您看。` : ',都认全了,扫一眼就能确认。';
+    parts.push(s);
+  } else parts.push('今晚的要货都确认完了。');
+
+  if (overview.prepared.length > 0) {
+    const names = overview.prepared.map((p) => p.customerName).slice(0, 3).join('、');
+    const est = overview.prepared.reduce((s, p) => s + p.estimateCents, 0);
+    let s = `${overview.prepared.length}家等着记账:${names}${overview.prepared.length > 3 ? '等' : ''}。价钱都按上回的给您备好了`;
+    s += est > 0 ? `,预计一共${speakYuan(est)},实称一填就能挂账。` : '。';
+    parts.push(s);
+  }
+
+  const bk = overview.booked;
+  if (bk.count > 0) parts.push(`今天已经记了${bk.count}笔账,共${speakYuan(bk.cents)}。`);
+  if (bk.heldCount > 0) parts.push(`有${bk.heldCount}张单子有改动,还挂着等您改账。`);
+  const pay = overview.payments;
+  if (pay.count > 0) parts.push(`收了${pay.count}笔钱,共${speakYuan(pay.cents)}。`);
+
+  const rc = overview.receivable;
+  if (rc.cents > 0) {
+    const top = rc.debtors[0];
+    let s = `外头一共欠着${speakYuan(rc.cents)}。欠得最多的是${top.name},${speakYuan(top.cents)}`;
+    if (top.aging.bucket === 'red') s += `,已经欠了${top.aging.days}天,得催一催了。`;
+    else if (top.aging.bucket === 'yellow') s += `,欠了${top.aging.days}天,可以提一嘴。`;
+    else s += ',还在正常天数里。';
+    parts.push(s);
+    const alarm = rc.debtors.filter((x) => x !== top && x.aging.bucket === 'red');
+    if (alarm.length) parts.push(`另外${alarm.map((x) => x.name).join('、')}也欠超过60天了。`);
+  } else parts.push('外头没有欠账,清清爽爽。');
+
+  const au = overview.audit;
+  parts.push(au.ok
+    ? `账我全对过了:${au.total}项交叉检查全部通过,分毫不差,您放心。`
+    : `注意:${au.total}项交叉检查有${au.total - au.passed}项没对上,第一条是:${au.checks.find((c) => !c.pass).issues[0]}。今晚得看一眼。`);
+  return { text: parts.join(''), parts };
+}
+
+/* ---------------- 铁律②:客户360(一页看全一家店,每笔钱带单据链) ---------------- */
+async function traceCustomer(store, { tenantId, partyId, today }) {
+  const { aging, openDeliveries } = require('./allocation');
+  const [customerList, entries, receipts, statements, allocations] = await Promise.all([
+    store.find('customers', { eq: { tenantId } }),
+    store.find('entries', { eq: { tenantId, partyId } }),
+    store.find('receipts', { eq: { tenantId, partyId } }),
+    store.find('statements', { eq: { tenantId, partyId } }),
+    store.find('allocations', { eq: { tenantId, partyId } }),
+  ]);
+  const customer = customerList.find((c) => c.id === partyId) || null;
+  const receiptByNo = new Map(receipts.map((r) => [r.receiptNo, r]));
+  const allocByEntry = new Map(); const allocByPayment = new Map();
+  for (const a of allocations) {
+    if (a.voided) continue;
+    if (a.entryId != null) {
+      if (!allocByEntry.has(a.entryId)) allocByEntry.set(a.entryId, []);
+      allocByEntry.get(a.entryId).push(a);
+    }
+    if (!allocByPayment.has(a.paymentEntryId)) allocByPayment.set(a.paymentEntryId, []);
+    allocByPayment.get(a.paymentEntryId).push(a);
+  }
+  const entryById = new Map(entries.map((e) => [e.id, e]));
+
+  const timeline = entries.filter((e) => e.direction === 'receivable').sort(sortBySeq).map((e) => {
+    const row = {
+      id: e.id, bizDate: e.bizDate, type: e.type, amountCents: e.amountCents,
+      refType: e.refType, refId: e.refId, memo: e.memo || null,
+    };
+    if (e.type === 'delivery' && e.refType === 'receipt') {
+      const r = receiptByNo.get(e.refId);
+      if (r) row.receipt = { receiptNo: r.receiptNo, itemCount: (r.items || []).length, items: r.items || [] };
+      const settled = (allocByEntry.get(e.id) || []).reduce((s, a) => s + a.amountCents, 0);
+      row.settledCents = settled; row.openCents = e.amountCents - settled;
+    }
+    if (e.type === 'payment') {
+      row.settles = (allocByPayment.get(e.id) || []).map((a) => ({
+        amountCents: a.amountCents, kind: a.kind,
+        targetRef: a.entryId != null && entryById.has(a.entryId) ? entryById.get(a.entryId).refId : (a.kind === 'prepay' ? '预收' : null),
+      }));
+    }
+    return row;
+  });
+
+  // 该户独立交叉验证:这页给客户看之前,先让机器把两条路径的数比一遍
+  const computed = timeline.reduce((s, r) => s + r.amountCents, 0);
+  const { getBalance } = require('./balance');
+  const balanceCents = await getBalance(store, tenantId, partyId);
+  const open = await openDeliveries(store, tenantId, partyId);
+  const openTotal = open.reduce((s, x) => s + x.openCents, 0);
+
+  return {
+    customer: customer ? { id: customer.id, name: customer.name, settle: customer.settle || null, note: customer.note || null } : null,
+    balanceCents,
+    aging: await aging(store, { tenantId, partyId, today }),
+    timeline,
+    statements: statements.sort((a, b) => (a._seq || 0) - (b._seq || 0)).map((s) => ({
+      key: s.id, no: s.no, kind: s.kind, periodKey: s.periodKey, status: s.status, closingCents: s.closingCents,
+    })),
+    openDeliveries: open.map((x) => ({ refId: x.entry.refId, bizDate: x.entry.bizDate, totalCents: x.entry.amountCents, openCents: x.openCents })),
+    verify: {
+      ledgerCents: computed,
+      balanceCents,
+      openCents: openTotal,
+      consistent: computed === balanceCents && (balanceCents <= 0 || openTotal === balanceCents),
+    },
+  };
+}
+
+module.exports = { suggestPrices, runAudit, getOverview, buildBriefing, traceCustomer, speakYuan, addDays };
+
+});
+__def('seed', function (module, exports, require) {
+'use strict';
+// 家用版初始档案(design/14 三.6):全部来自店里照片实物,手写体识读存疑处
+// 在 note 里标(?),上线前由店主逐条校对。价格未知一律 0,首周补录。
+// priceMode: fixed=固定价(调味粮油) / daily=日价(蔬菜肉类,weighable 实称)。
+
+const CUSTOMERS = [
+  { id: 'c_jxxc', name: '佳湘小厨', aliases: ['佳湘'], settle: '现结/短周期', note: '微信文字长清单下单,¥220转账实例' },
+  { id: 'c_dbjcc', name: '东北家常菜', aliases: ['东北'], settle: '待定' },
+  { id: 'c_zjf', name: '猪脚饭', aliases: [], settle: '待定' },
+  { id: 'c_dwx', name: '大碗香', aliases: [], settle: '待定' },
+  { id: 'c_hxg', name: '黄小馆', aliases: [], settle: '月结', note: '(?)手写体待校对;8月流水39353、7月40948——最大户之一' },
+  { id: 'c_ej', name: '二建', aliases: [], settle: '月结', note: '大米大户,签收人"刘(?)"' },
+  { id: 'c_4h', name: '4号', aliases: ['4J'], settle: '月结', note: '(?)购货单位代号待校对;7月流水4158' },
+  { id: 'c_16', name: '十六', aliases: ['16'], settle: '待定', note: '拢账本客户段代号' },
+  { id: 'c_16dm', name: '十六对面', aliases: ['16对面'], settle: '待定', note: '与"十六"互为前缀——拆单最长匹配的活用例' },
+  { id: 'c_1125', name: '11-25', aliases: [], settle: '待定', note: '门牌号命名' },
+  { id: 'c_nrt', name: '牛肉汤馆', aliases: ['牛肉汤'], settle: '待定', note: '(?)手写体待校对' },
+  { id: 'c_bg', name: '北沟', aliases: [], settle: '待定', note: '(?)是客户、产地还是供应商待确认' },
+];
+
+// [phrase, unit, priceMode, weighable]
+const P = (phrase, unit, priceMode, weighable) => ({ phrase, unit, priceMode, weighable });
+const PRODUCTS = [
+  // 蔬菜(日价,实称)
+  P('小葱', '斤', 'daily', true), P('香葱', '斤', 'daily', true), P('香菜', '斤', 'daily', true),
+  P('绿豆芽', '斤', 'daily', true), P('黄豆芽', '斤', 'daily', true), P('番茄', '斤', 'daily', true),
+  P('线椒', '斤', 'daily', true), P('青椒', '斤', 'daily', true), P('圆椒', '斤', 'daily', true),
+  P('姜', '斤', 'daily', true), P('藕', '斤', 'daily', true), P('蒜台', '斤', 'daily', true),
+  P('小油菜', '斤', 'daily', true), P('油菜', '斤', 'daily', true), P('生菜', '斤', 'daily', true),
+  P('白菜', '斤', 'daily', true), P('豆角', '斤', 'daily', true), P('长豆角', '斤', 'daily', true),
+  P('土豆', '斤', 'daily', true), P('茄子', '斤', 'daily', true), P('黄瓜', '斤', 'daily', true),
+  P('花菜', '斤', 'daily', true),
+  // 肉禽蛋(日价为主,实称/按件)
+  P('羊肉', '斤', 'daily', true), P('鸡排', '斤', 'daily', true), P('鸡心', '斤', 'daily', true),
+  P('鸡翅', '件', 'fixed', false), P('鸡脸', '件', 'fixed', false),
+  P('去皮蛋', '斤', 'daily', true), P('鸭血', '箱', 'fixed', false),
+  // 豆制品/半成品
+  P('干张', '斤', 'daily', true), P('炸豆腐', '斤', 'daily', true), P('皮冻', '斤', 'daily', true),
+  P('豆卷', '斤', 'daily', true), P('饺子皮', '斤', 'daily', true), P('小饼', '个', 'fixed', false),
+  // 水产/熟食
+  P('鲤鱼', '条', 'daily', true), P('花甲', '斤', 'daily', true),
+  P('烧鸡', '只', 'fixed', false), P('三文治火腿肠', '根', 'fixed', false),
+  // 粮油(固定价)
+  P('大米', '袋', 'fixed', false), P('五得利面粉', '袋', 'fixed', false), P('面粉', '袋', 'fixed', false),
+  P('油', '桶', 'fixed', false), P('羊油', '斤', 'daily', true),
+  // 调味(固定价)
+  P('生抽', '件', 'fixed', false), P('料酒', '件', 'fixed', false), P('淀粉', '袋', 'fixed', false),
+  P('辣段', '斤', 'fixed', false), P('桂皮', '斤', 'fixed', false), P('熟芝麻', '斤', 'fixed', false),
+  P('黄灯笼辣椒酱', '瓶', 'fixed', false), P('辣妹子', '斤', 'fixed', false), P('黄豆', '包', 'fixed', false),
+];
+
+function catalogFor() {
+  // 家用版:全部客户共享同一目录(常用品对照表按客户细化是后续动作)
+  return PRODUCTS.map((p, i) => ({
+    sku: `SKU-${String(i + 1).padStart(3, '0')}`,
+    phrase: p.phrase, spec: '', unit: p.unit,
+  }));
+}
+
+async function seedTenant(store, tenantId) {
+  const catalog = catalogFor();
+  const customers = [];
+  for (const c of CUSTOMERS) {
+    customers.push(await store.insert('customers', {
+      id: `${tenantId}|${c.id}`, tenantId,
+      name: c.name, aliases: c.aliases, settle: c.settle, note: c.note || null,
+    }));
+  }
+  const products = [];
+  for (let i = 0; i < PRODUCTS.length; i++) {
+    const p = PRODUCTS[i];
+    products.push(await store.insert('products', {
+      id: `${tenantId}|SKU-${String(i + 1).padStart(3, '0')}`, tenantId,
+      name: p.phrase, unit: p.unit, priceMode: p.priceMode, weighable: p.weighable,
+      salePriceCents: 0, // 待店主首周补录
+    }));
+  }
+  return { customers: customers.length, products: products.length };
+}
+
+// 拆单器需要的形态(含共享目录)
+function splitterCustomers() {
+  const catalog = catalogFor();
+  return CUSTOMERS.map((c) => ({ id: c.id, name: c.name, aliases: c.aliases, catalog }));
+}
+
+module.exports = { CUSTOMERS, PRODUCTS, seedTenant, splitterCustomers };
+
+module.exports = { seedTenant: seedTenant };
+});
+  window.__CORE = __req;
+})();
+</script>
+<script>
+/* 体验版路由 + 布景:数据全在本页内存,刷新即重置 */
+(function () {
+  var C = window.__CORE;
+  var money = C('money'), storeM = C('store-memory'), num = C('numbering');
+  var bal = C('balance'), alloc = C('allocation'), stmt = C('statement');
+  var del = C('delivery'), intake = C('intake'), prep = C('prepare'), seed = C('seed');
+  var store = new storeM.MemoryStore();
+  num.initNumbering(store);
+  var T = 't1';
+  function ld(off) { var d = new Date(); d.setDate(d.getDate() + off);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function dk(s) { return s.split('-').join(''); }
+  var JX = 't1|c_jxxc', DB = 't1|c_dbjcc', SLD = 't1|c_16dm', HX = 't1|c_hxg', EJ = 't1|c_ej';
+
+  // 布景:昨天真实营业一轮(留下价格记忆),老欠账两户(红/黄),今晚的消息已到
+  var ready = (async function () {
+    await seed.seedTenant(store, T);
+    var y = ld(-1), yk = dk(y);
+    async function receipt(party, items) {
+      return del.postDeliveryReceipt(store, { tenantId: T, partyId: party, bizDate: y, dateKey: yk,
+        items: items.map(function (x) { return { name: x[0], qtyOrdered: x[1], qtyActual: x[2] != null ? x[2] : x[1], unit: x[3], unitPriceCents: money.toCents(x[4]) }; }) });
+    }
+    var r1 = await receipt(JX, [['姜', 3, 2.8, '斤', '1.9'], ['藕', 3, 3, '斤', '4'], ['蒜台', 2, 2, '斤', '6'], ['烧鸡', 2, null, '只', '40'], ['黄灯笼辣椒酱', 2, null, '瓶', '13']]);
+    await receipt(DB, [['小油菜', 1, 1.1, '斤', '2.5'], ['黄瓜', 2, 2, '斤', '3']]);
+    await receipt(SLD, [['香菜', 2, 2.2, '斤', '7.5'], ['桂皮', 1, 1, '斤', '12']]);
+    // 佳湘现结:昨晚扫码把 r1 全付清(核销闭环的活例子)
+    await alloc.recordPayment(store, { tenantId: T, partyId: JX, amountCents: r1.amountCents, method: '微信', refId: 'pay_demo_1', bizDate: y });
+    await stmt.generateStatement(store, { tenantId: T, partyId: JX, kind: 'RZ', periodKey: yk, from: y, to: y, openingCents: 0 });
+    // 老欠账:黄小馆 393.53 欠了 62 天(红);二建 120 欠了 35 天(黄)
+    await bal.applyEntry(store, { tenantId: T, partyId: HX, type: 'opening', amountCents: money.toCents('393.53'), refType: 'opening', refId: 'QC-hx', bizDate: ld(-62) });
+    await bal.applyEntry(store, { tenantId: T, partyId: EJ, type: 'opening', amountCents: money.toCents('120'), refType: 'opening', refId: 'QC-ej', bizDate: ld(-35) });
+    // 今晚的微信消息已粘进来:两家全认出,一家有标红;东北那单已经确认好(备好卡的活例子)
+    var r = await intake.createIntakeFromText(store, { tenantId: T, bizDate: ld(0), source: 'paste-pc',
+      text: '佳湘小厨\n姜三斤\n香菜2斤\n烧鸡两只\n干张2斤\n东北家常菜 小油菜1斤 黄瓜2斤\n猪脚饭 拿点桂皮' });
+    var db = r.created.filter(function (it) { return it.partyId === DB; })[0];
+    if (db) await intake.confirmIntake(store, db.id, {});
+  })();
+
+  function J(p) { var u = p.split('?'); return { base: u[0], q: new URLSearchParams(u[1] || '') }; }
+  async function route(path, body) {
+    await ready;
+    var u = J(path), q = u.q, seg = u.base.split('/').map(decodeURIComponent), today = ld(0);
+    if (u.base === '/api/customers') {
+      return { customers: (await store.find('customers', { eq: { tenantId: T } })).map(function (x) { return { id: x.id, name: x.name, aliases: x.aliases || [] }; }) };
+    }
+    if (u.base === '/api/products') {
+      return { products: (await store.find('products', { eq: { tenantId: T } })).map(function (p) { return { id: p.id, name: p.name, unit: p.unit, weighable: !!p.weighable }; }) };
+    }
+    if (u.base === '/api/overview') return prep.getOverview(store, { tenantId: T, bizDate: q.get('bizDate') || today, today: q.get('today') || today });
+    if (u.base === '/api/briefing') {
+      var ov = await prep.getOverview(store, { tenantId: T, bizDate: q.get('bizDate') || today, today: q.get('today') || today });
+      return prep.buildBriefing(ov);
+    }
+    if (u.base === '/api/audit') return prep.runAudit(store, { tenantId: T });
+    if (u.base === '/api/price-suggest') {
+      return prep.suggestPrices(store, { tenantId: T, partyId: q.get('customerId'), names: String(q.get('names') || '').split(',').filter(Boolean) });
+    }
+    if (u.base === '/api/intake' && body) {
+      var r = await intake.createIntakeFromText(store, { tenantId: T, text: body.text, source: body.source, bizDate: body.bizDate });
+      return { ok: true, created: r.created.map(function (it) { return { id: it.id, customerName: it.customerName, status: it.status, lines: it.lines.length }; }), unassignedLines: r.unassignedLines };
+    }
+    if (u.base === '/api/intake/todolist') return { groups: await intake.getTodolist(store, { tenantId: T, bizDate: q.get('bizDate') }) };
+    if (u.base === '/api/intake/confirmed') return { groups: await intake.getConfirmed(store, { tenantId: T, bizDate: q.get('bizDate') }) };
+    if (seg.length === 5 && seg[2] === 'intake') {
+      if (seg[4] === 'confirm') return { ok: true, status: (await intake.confirmIntake(store, seg[3], { lines: body && body.lines, partyId: body && body.partyId })).status };
+      if (seg[4] === 'book') return { ok: true, status: (await intake.bookIntake(store, seg[3], { receiptNo: body && body.receiptNo })).status };
+      if (seg[4] === 'dismiss') return { ok: true, status: (await intake.dismissIntake(store, seg[3], body && body.reason)).status };
+    }
+    if (u.base === '/api/receipts' && body) {
+      var items = body.items.map(function (it) { return { name: it.name, unit: it.unit, qtyOrdered: it.qtyOrdered, qtyActual: it.qtyActual, unitPriceCents: money.toCents(it.unitPriceYuan) }; });
+      var rr = await del.postDeliveryReceipt(store, { tenantId: T, partyId: body.customerId, bizDate: body.bizDate, dateKey: body.dateKey, items: items, diff: body.diff === true, signer: body.signer });
+      return { ok: true, receiptId: rr.receipt.id, receiptNo: rr.receipt.receiptNo, amountCents: rr.amountCents, held: rr.held };
+    }
+    if (u.base === '/api/statements/daily' && body) {
+      var g = await stmt.generateStatement(store, { tenantId: T, partyId: body.customerId, kind: 'RZ', periodKey: body.dateKey, from: body.bizDate, to: body.bizDate, openingCents: body.openingCents | 0 });
+      return { ok: true, created: g.created, no: g.stmt.no, closingCents: g.stmt.closingCents };
+    }
+    if (u.base === '/api/payments' && body) {
+      var pr = await alloc.recordPayment(store, { tenantId: T, partyId: body.customerId, amountCents: money.toCents(body.amountYuan), method: body.method, refId: body.refId, bizDate: body.bizDate });
+      return { ok: true, prepayCents: pr.prepayCents, balanceCents: await bal.getBalance(store, T, body.customerId) };
+    }
+    if (seg.length === 5 && seg[2] === 'customers') {
+      var pid = seg[3];
+      if (seg[4] === 'balance') return { balanceCents: await bal.getBalance(store, T, pid), aging: await alloc.aging(store, { tenantId: T, partyId: pid, today: q.get('today') || today }) };
+      if (seg[4] === 'monthly') return stmt.monthlyView(store, { tenantId: T, partyId: pid, from: q.get('from'), to: q.get('to') });
+      if (seg[4] === 'trace') return prep.traceCustomer(store, { tenantId: T, partyId: pid, today: q.get('today') || today });
+    }
+    throw new Error('体验版没有这个接口: ' + u.base);
+  }
+  window.__DEMO = { handle: function (path, body) {
+    return route(path, body || null)
+      .then(function (json) { return { ok: true, json: json }; })
+      .catch(function (e) { return { ok: false, json: { ok: false, error: String((e && e.message) || e) } }; });
+  } };
+  /* 开场:把今晚还没贴的那段消息先摆在粘贴框里(十六对面 + 一条含糊单) */
+  var pasteEl = document.getElementById('paste');
+  if (pasteEl && !pasteEl.value) pasteEl.value = '十六对面\n香菜2斤\n干张一斤\n拿点熟芝麻';
+})();
+</script>
+<script>
+var TENANT = localStorage.getItem('tenant') || 't1';
+var CUSTOMERS = [], PRODUCTS = {}, ITEMS = {}, BOOK = {}, OV = null, TRACES = {};
+
+function api(path, body, method){ return window.__DEMO.handle(path, body); }
+function today(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function dkey(){ return today().split('-').join(''); }
+function monthStart(){ return today().slice(0,8) + '01'; }
+function esc(s){ var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function yuan(c){ return (c/100).toFixed(2); }
+function yuanCn(c){ var v = c/100; return (v === Math.floor(v)) ? String(v) : v.toFixed(2); }
+function pname(sku, raw){ return PRODUCTS[sku] ? PRODUCTS[sku].name : raw; }
+function srcLabel(s){
+  if (!s || s.source === 'none') return '<span class="chip amber">要问价</span>';
+  if (s.source === 'customer-last') return '<span class="chip brand" title="这家上回的价">上回 ' + esc((s.lastDate||'').slice(5).replace('-','.')) + '</span>';
+  if (s.source === 'tenant-last') return '<span class="chip gray" title="别家最近用过的价">店里价</span>';
+  return '<span class="chip gray">档案价</span>';
+}
+
+/* ---------- 页籤 ---------- */
+var PAGES = ['ov','in','bk','ac'];
+function show(p){
+  PAGES.forEach(function(x){
+    document.getElementById('page-'+x).className = 'page' + (x===p ? ' on' : '');
+    document.getElementById('tab-'+x).className = 'tab' + (x===p ? ' on' : '');
+  });
+  if (p==='ov') loadOverview();
+  if (p==='in') refresh();
+  if (p==='bk') loadBooking();
+  if (p==='ac') loadAccounts();
+}
+
+/* ---------- ⓪ 今日总览 ---------- */
+function loadOverview(force){
+  api('/api/overview?bizDate='+today()+'&today='+today()).then(function(r){
+    if (!r.ok) return;
+    OV = r.json; renderOverview(OV);
+    if (force) note('', '');
+  });
+}
+function renderOverview(ov){
+  /* 顶栏徽记 */
+  var bin = document.getElementById('bdg-in');
+  bin.textContent = ov.intake.groupsOpen;
+  bin.className = 'bdg' + (ov.intake.flaggedLines > 0 ? ' hot' : (ov.intake.groupsOpen > 0 ? ' warm' : ''));
+  var bbk = document.getElementById('bdg-bk');
+  bbk.textContent = ov.prepared.length;
+  bbk.className = 'bdg' + (ov.prepared.length > 0 ? ' warm' : '');
+  var pill = document.getElementById('auditPill');
+  if (ov.audit.ok) { pill.className = 'pill ok'; pill.textContent = '账已核对 ✓ ' + ov.audit.passed + '/' + ov.audit.total; }
+  else { pill.className = 'pill bad'; pill.textContent = '账有 ' + (ov.audit.total - ov.audit.passed) + ' 处不平!'; }
+
+  /* 下一步 */
+  var nb = document.getElementById('nextBanner');
+  var say, go, target, calm = false;
+  if (ov.intake.flaggedLines > 0) { say = '有 ' + ov.intake.flaggedLines + ' 样要货拿不准,已标红——先看这个'; go = '去看标红'; target = 'in'; }
+  else if (ov.intake.groupsOpen > 0) { say = ov.intake.groupsOpen + ' 家的要货等确认,都认全了,扫一眼就行'; go = '去确认'; target = 'in'; }
+  else if (ov.booked.heldCount > 0) { say = '有 ' + ov.booked.heldCount + ' 张改动单挂着,等您改账'; go = '去处理'; target = 'bk'; }
+  else if (ov.prepared.length > 0) { say = ov.prepared.length + ' 家的账都替您备好了,扫一眼就能挂账'; go = '去记账'; target = 'bk'; }
+  else { say = '今晚的事办完了,清清爽爽'; go = '听个汇报'; target = null; calm = true; }
+  nb.style.display = 'flex';
+  nb.className = 'next' + (calm ? ' calm' : '');
+  nb.innerHTML = '<span class="lead">下一步</span><span class="say">' + esc(say) + '</span>'
+    + '<button class="go" onclick="' + (target ? "show('"+target+"')" : 'toggleSpeak()') + '">' + esc(go) + '</button>';
+
+  /* 统计块 */
+  var est = 0; ov.prepared.forEach(function(p){ est += p.estimateCents; });
+  var reds = ov.receivable.debtors.filter(function(d){ return d.aging.bucket === 'red'; }).length;
+  var yels = ov.receivable.debtors.filter(function(d){ return d.aging.bucket === 'yellow'; }).length;
+  var k = '';
+  k += kpi("show('in')", '今晚要货', ov.intake.groupsOpen + '<small> 家 · ' + ov.intake.openLines + ' 样</small>',
+    ov.intake.flaggedLines > 0 ? '<span class="chip red">' + ov.intake.flaggedLines + ' 样标红待核</span>' : (ov.intake.groupsOpen > 0 ? '都认全了' : '没有待办'));
+  k += kpi("show('bk')", '备好待记账', ov.prepared.length + '<small> 家</small>',
+    ov.prepared.length ? '预计 ¥' + yuan(est) + ' · 价都按上回填好' : '暂无');
+  k += kpi("show('bk')", '今天进出', '<span title="挂账">¥' + yuan(ov.booked.cents) + '</span><small> / 收 ¥' + yuan(ov.payments.cents) + '</small>',
+    '挂账 ' + ov.booked.count + ' 笔 · 收款 ' + ov.payments.count + ' 笔' + (ov.booked.heldCount ? ' <span class="chip amber">' + ov.booked.heldCount + ' 张改动单挂着</span>' : ''));
+  k += kpi("show('ac')", '外头欠着', '¥' + yuan(ov.receivable.cents),
+    ov.receivable.cents > 0 ? ((reds ? '<span class="chip red">红 ' + reds + ' 家</span>' : '') + (yels ? '<span class="chip amber">黄 ' + yels + ' 家</span>' : '') + (!reds && !yels ? '都在30天内' : '')) : '没有欠账');
+  document.getElementById('kpis').innerHTML = k;
+
+  /* 备好的账 */
+  var el = document.getElementById('prepList'); var h = '';
+  if (!ov.prepared.length) {
+    h = '<div class="empty">' + (ov.intake.groupsOpen > 0
+      ? '要货还没确认——先去 <a class="jump" onclick="show(\'in\')">今晚要办</a> 扫一眼'
+      : '今晚没有待记的账 <b>✓</b>') + '</div>';
+  } else ov.prepared.forEach(function(p){
+    h += '<div class="prep"><div class="prep-h"><span class="nm">' + esc(p.customerName) + '</span>'
+      + '<span class="chip gray">' + p.totalLines + ' 样</span>'
+      + '<span class="est num"><small>预计</small>¥' + yuan(p.estimateCents) + '</span></div>';
+    p.lines.forEach(function(l){
+      h += '<div class="rowline"><span class="pn">' + esc(l.name) + '</span>'
+        + '<span class="qy num">' + esc((l.qty != null ? l.qty : '?') + (l.unit || '')) + '</span>'
+        + srcLabel(l.suggest)
+        + (l.suggest && l.suggest.cents != null ? '<span class="mut3 num">×' + yuanCn(l.suggest.cents) + '</span>' : '')
+        + '<span class="amt num">' + (l.estimateCents != null ? '≈¥' + yuan(l.estimateCents) : '—') + '</span></div>';
+    });
+    h += '<div class="prep-f"><button class="btn" onclick="show(\'bk\')">去记账,数都填好了</button>'
+      + (p.allPriced ? '<span class="note okk">单价齐了,扫一眼就行</span>' : '<span class="note">有几样没价格记忆,记账时问一声</span>') + '</div></div>';
+  });
+  el.innerHTML = h;
+
+  /* 该催的账 */
+  var alarms = ov.receivable.debtors.filter(function(d){ return d.aging.bucket !== 'green'; });
+  var dc = document.getElementById('debtCard');
+  if (alarms.length) {
+    dc.style.display = 'block';
+    var dh = '';
+    alarms.sort(function(a,b){ return b.aging.days - a.aging.days; }).forEach(function(d){
+      dh += '<div class="rowline"><span class="pn">' + esc(d.name) + '</span>'
+        + '<span class="chip ' + (d.aging.bucket === 'red' ? 'red' : 'amber') + '">欠了 ' + d.aging.days + ' 天</span>'
+        + '<span class="amt num">¥' + yuan(d.cents) + '</span>'
+        + '<button class="btn ghost sm" onclick="gotoTrace(\'' + esc(d.partyId) + '\')">看往来</button></div>';
+    });
+    document.getElementById('debtList').innerHTML = dh;
+  } else dc.style.display = 'none';
+
+  /* 七日走势 */
+  var mx = 0, sum = 0;
+  ov.last7.forEach(function(d){ if (d.cents > mx) mx = d.cents; sum += d.cents; });
+  var sp = '';
+  ov.last7.forEach(function(d, i){
+    var hpx = mx > 0 ? Math.max(3, Math.round(d.cents / mx * 78)) : 2;
+    var cls = 'sp' + (i === 6 ? ' today' : '') + (mx > 0 && d.cents === mx && i !== 6 ? ' peak' : '');
+    sp += '<div class="' + cls + '"><span class="v7 num">' + yuanCn(d.cents) + '</span>'
+      + '<div class="bar7" style="height:' + hpx + 'px" data-tip="' + esc(d.date.slice(5).replace('-','.')) + ' 送货 ¥' + yuan(d.cents) + '"></div>'
+      + '<span class="d7 num">' + (i === 6 ? '今天' : d.date.slice(8).replace(/^0/,'') + '日') + '</span></div>';
+  });
+  document.getElementById('spark').innerHTML = sp;
+  document.getElementById('sparkSum').textContent = '七天共 ¥' + yuan(sum);
+
+  /* 验证条 */
+  var ah = '';
+  ov.audit.checks.forEach(function(c){
+    ah += '<div class="audit-row"><span class="st ' + (c.pass ? 'ok">✓' : 'bad">✕') + '</span><div><div>' + esc(c.name)
+      + ' <span class="mut3 num">(' + c.checked + ' 笔)</span></div>';
+    if (!c.pass) c.issues.slice(0,3).forEach(function(s){ ah += '<div class="iss">' + esc(s) + '</div>'; });
+    ah += '</div></div>';
+  });
+  document.getElementById('auditList').innerHTML = ah;
+}
+function kpi(onclick, k, v, s){
+  return '<div class="kpi" onclick="' + onclick + '"><div class="k"><span>' + k + '</span></div>'
+    + '<div class="v num">' + v + '</div><div class="s">' + s + '</div></div>';
+}
+function gotoTrace(pid){ show('ac'); setTimeout(function(){ openTrace(pid); }, 150); }
+function note(id, txt, cls){ var el = document.getElementById(id); if (el) { el.textContent = txt; el.className = 'note ' + (cls||''); } }
+
+/* ---------- 听汇报 ---------- */
+var SPEAKING = false;
+function toggleSpeak(){
+  if (SPEAKING) { window.speechSynthesis && speechSynthesis.cancel(); stopSpeakUI(); return; }
+  api('/api/briefing?bizDate='+today()+'&today='+today()).then(function(r){
+    if (!r.ok) return;
+    var parts = r.json.parts || [r.json.text];
+    var bx = document.getElementById('briefText');
+    bx.innerHTML = parts.map(function(p,i){ return '<span id="bp'+i+'">' + esc(p) + '</span>'; }).join('');
+    document.getElementById('brief').className = 'brief on';
+    if (!window.speechSynthesis) return; /* 不支持语音的浏览器:能看文字稿 */
+    speechSynthesis.cancel();
+    SPEAKING = true;
+    document.getElementById('btnSpeak').classList.add('speaking');
+    document.getElementById('btnSpeak').lastChild.textContent = '停下';
+    var vs = speechSynthesis.getVoices().filter(function(v){ return /zh|cmn/i.test(v.lang); });
+    parts.forEach(function(p, i){
+      var u = new SpeechSynthesisUtterance(p);
+      u.lang = 'zh-CN'; u.rate = 0.92; if (vs.length) u.voice = vs[0];
+      u.onstart = function(){ var el = document.getElementById('bp'+i); if (el) el.className = 'said'; };
+      if (i === parts.length - 1) u.onend = stopSpeakUI;
+      speechSynthesis.speak(u);
+    });
+  });
+}
+function stopSpeakUI(){
+  SPEAKING = false;
+  var b = document.getElementById('btnSpeak');
+  b.classList.remove('speaking'); b.lastChild.textContent = '听汇报';
+}
+function hideBrief(){
+  document.getElementById('brief').className = 'brief';
+  if (SPEAKING) { speechSynthesis.cancel(); stopSpeakUI(); }
+}
+
+/* ---------- ① 今晚要办 ---------- */
+function splitIt(){
+  var text = document.getElementById('paste').value;
+  if (!text.trim()) return;
+  document.getElementById('btnSplit').disabled = true;
+  api('/api/intake', { text: text, source: 'paste-pc', bizDate: today() }).then(function(r){
+    document.getElementById('btnSplit').disabled = false;
+    if (!r.ok) { note('pasteMsg', '出错:' + (r.json && r.json.error), 'err'); return; }
+    var un = (r.json.unassignedLines || []).length;
+    note('pasteMsg', '已进清单 ' + r.json.created.length + ' 家' + (un ? ';有 ' + un + ' 行没认出是哪家,补店名重贴' : ''), un ? 'err' : 'okk');
+    document.getElementById('paste').value = '';
+    refresh(); loadOverview();
+  });
+}
+function refresh(){ api('/api/intake/todolist?bizDate='+today()).then(function(r){ if (r.ok) renderList(r.json.groups); }); }
+function renderList(groups){
+  var el = document.getElementById('list');
+  if (!groups.length) { el.innerHTML = '<div class="empty">清了 <b>✓</b> 去 <a class="jump" onclick="show(\'bk\')">记账台</a>——账都备好了</div>'; return; }
+  var h = '';
+  groups.forEach(function(g){ g.items.forEach(function(it){
+    ITEMS[it.id] = it;
+    var fl = it.status === 'flagged';
+    h += '<div class="grp' + (fl ? ' flagged' : '') + '"><div class="grp-h"><span class="nm">' + esc(g.customerName || '没认出的店') + '</span>'
+      + '<span class="chip ' + (fl ? 'red">先看这条,有拿不准的' : 'good">' + it.lines.length + ' 样,都认全了') + '</span></div>';
+    it.lines.forEach(function(l, i){
+      if (l.flagged) {
+        h += '<div class="lrow bad"><span>' + esc(l.raw) + '</span><span class="why">' + esc(l.reason || '') + '</span>'
+          + '<input class="mini" type="number" step="0.1" min="0" placeholder="数量" id="q-' + it.id + '-' + i + '">'
+          + '<input class="mini" type="text" placeholder="单位" id="u-' + it.id + '-' + i + '" value="' + esc(l.unit || '') + '"></div>';
+      } else {
+        h += '<div class="lrow"><span>' + esc(l.raw) + '</span><span class="chip good num">✓ ' + esc((l.qty != null ? l.qty : '') + (l.unit || '')) + '</span></div>';
+      }
+    });
+    h += '<div class="grp-f">';
+    if (!it.partyId) {
+      h += '<select id="p-' + it.id + '"><option value="">这是哪家店?</option>';
+      CUSTOMERS.forEach(function(c){ h += '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>'; });
+      h += '</select>';
+    }
+    h += '<button class="btn" onclick="confirmItem(\'' + it.id + '\')">确认</button>'
+      + '<button class="btn ghost" onclick="dismissItem(\'' + it.id + '\')">作废</button>'
+      + '<span class="note" id="m-' + it.id + '"></span></div></div>';
+  });});
+  el.innerHTML = h;
+}
+function confirmItem(id){
+  var it = ITEMS[id];
+  var lines = it.lines.map(function(l, i){
+    if (!l.flagged) return l;
+    var q = parseFloat((document.getElementById('q-'+id+'-'+i) || {}).value);
+    var u = ((document.getElementById('u-'+id+'-'+i) || {}).value || '').trim();
+    if (!(q > 0)) return l;
+    var f = {}; for (var k in l) f[k] = l[k];
+    f.flagged = false; f.qty = q; if (u) f.unit = u; f.reason = null; return f;
+  });
+  var body = { lines: lines };
+  var sel = document.getElementById('p-'+id);
+  if (sel && sel.value) body.partyId = sel.value;
+  api('/api/intake/'+id+'/confirm', body).then(function(r){
+    if (!r.ok) { note('m-'+id, r.json && r.json.error, 'err'); return; }
+    refresh(); loadOverview();
+  });
+}
+function dismissItem(id){ api('/api/intake/'+id+'/dismiss', { reason: '手动作废' }).then(function(){ refresh(); loadOverview(); }); }
+
+/* ---------- ② 记账台 ---------- */
+function loadBooking(){
+  /* 重渲染前先记住手填过的格子:老板娘填了一半的价,绝不能被刷新吃掉 */
+  var keep = {};
+  document.querySelectorAll('#booking input').forEach(function(inp){ if (inp.value !== '' && inp.value !== inp.defaultValue) keep[inp.id] = inp.value; });
+  api('/api/intake/confirmed?bizDate='+today()).then(function(r){
+    var el = document.getElementById('booking');
+    if (!r.ok) { el.innerHTML = esc(r.json && r.json.error); return; }
+    var groups = r.json.groups;
+    if (!groups.length) { el.innerHTML = '<div class="empty">没有待记账的需求——先去 <a class="jump" onclick="show(\'in\')">今晚要办</a> 确认要货</div>'; return; }
+    /* 逐家取价格记忆,预填单价 */
+    var jobs = groups.map(function(g){
+      var lines = [];
+      g.items.forEach(function(it){ it.lines.forEach(function(l){ lines.push(l); }); });
+      var names = lines.map(function(l){ return pname(l.sku, l.raw); });
+      var uniq = names.filter(function(n, i){ return names.indexOf(n) === i; });
+      return api('/api/price-suggest?customerId=' + encodeURIComponent(g.partyId) + '&names=' + encodeURIComponent(uniq.join(','))).then(function(s){
+        BOOK[g.partyId] = { group: g, lines: lines, sug: s.ok ? s.json : {} };
+      });
+    });
+    Promise.all(jobs).then(function(){
+      var h = '';
+      groups.forEach(function(g){
+        var b = BOOK[g.partyId];
+        h += '<div class="prep"><div class="prep-h"><span class="nm">' + esc(g.customerName) + '</span><span class="chip amber">待记账</span>'
+          + '<span class="est num" id="bt-' + esc(g.partyId) + '"></span></div>';
+        h += '<div class="tblwrap"><table><tr><th>品名</th><th class="r">要货</th><th class="r">实称</th><th class="r">单价(元)</th><th>价从哪来</th><th class="r">金额</th></tr>';
+        b.lines.forEach(function(l, i){
+          var nm = pname(l.sku, l.raw);
+          var s = b.sug[nm];
+          var pv = s && s.cents != null ? yuanCn(s.cents) : '';
+          h += '<tr><td><b>' + esc(nm) + '</b> <span class="mut3">' + esc(l.raw !== nm ? l.raw : '') + '</span></td>'
+            + '<td class="r num">' + esc((l.qty != null ? l.qty : '') + (l.unit || '')) + '</td>'
+            + '<td class="r"><input class="mini" type="number" step="0.01" min="0" id="ba-' + esc(g.partyId) + '-' + i + '" value="' + (l.qty != null ? l.qty : '') + '" oninput="recalc(\'' + esc(g.partyId) + '\')"></td>'
+            + '<td class="r"><input class="mini" type="number" step="0.01" min="0" placeholder="填价" id="bp-' + esc(g.partyId) + '-' + i + '" value="' + pv + '" data-ref="' + (s && s.cents != null ? s.cents : '') + '" oninput="recalc(\'' + esc(g.partyId) + '\')"></td>'
+            + '<td>' + srcLabel(s) + '</td>'
+            + '<td class="r num" id="bx-' + esc(g.partyId) + '-' + i + '">—</td></tr>';
+        });
+        h += '</table></div>';
+        h += '<div class="prep-f"><button class="btn" onclick="bookGroup(\'' + esc(g.partyId) + '\', this)">看一眼没错,记回执挂账</button>'
+          + '<span class="note" id="bm-' + esc(g.partyId) + '"></span></div></div>';
+      });
+      el.innerHTML = h;
+      Object.keys(keep).forEach(function(id){ var inp = document.getElementById(id); if (inp) inp.value = keep[id]; });
+      groups.forEach(function(g){ recalc(g.partyId); });
+    });
+  });
+}
+function recalc(pid){
+  var b = BOOK[pid]; if (!b) return;
+  var total = 0, all = true;
+  b.lines.forEach(function(l, i){
+    var q = parseFloat((document.getElementById('ba-'+pid+'-'+i) || {}).value);
+    var pEl = document.getElementById('bp-'+pid+'-'+i);
+    var p = parseFloat((pEl || {}).value);
+    var cell = document.getElementById('bx-'+pid+'-'+i);
+    if (q > 0 && p > 0) {
+      var cents = Math.round(Math.round(q*1000) * Math.round(p*100) / 1000);
+      total += cents;
+      if (cell) cell.textContent = '¥' + yuan(cents);
+      /* 偏差提醒:和上回价差两成以上,黄一下 */
+      var ref = pEl && parseInt(pEl.getAttribute('data-ref'), 10);
+      if (pEl) {
+        var off = ref > 0 && Math.abs(p*100 - ref) / ref > 0.2;
+        pEl.className = 'mini' + (off ? ' warnp' : '');
+        pEl.title = off ? ('和上回 ' + yuanCn(ref) + ' 元差得有点多,看一眼') : '';
+      }
+    } else { all = false; if (cell) cell.textContent = '—'; }
+  });
+  var t = document.getElementById('bt-'+pid);
+  if (t) t.innerHTML = '<small>合计</small>¥' + yuan(total) + (all ? '' : ' <span class="chip amber">还有没填的</span>');
+}
+function bookGroup(partyId, btnEl){
+  var b = BOOK[partyId];
+  if (!b || (btnEl && btnEl.disabled)) return;
+  var items = [];
+  for (var i = 0; i < b.lines.length; i++){
+    var l = b.lines[i];
+    var nm = pname(l.sku, l.raw);
+    var qa = parseFloat((document.getElementById('ba-'+partyId+'-'+i) || {}).value);
+    var up = parseFloat((document.getElementById('bp-'+partyId+'-'+i) || {}).value);
+    if (!(up > 0)) { note('bm-'+partyId, '「' + nm + '」的单价还没填', 'err'); return; }
+    items.push({ name: nm, unit: l.unit, qtyOrdered: l.qty, qtyActual: (qa > 0 ? qa : l.qty), unitPriceYuan: String(up) });
+  }
+  if (btnEl) btnEl.disabled = true; /* 防双击重复挂账 */
+  api('/api/receipts', { customerId: partyId, bizDate: today(), dateKey: dkey(), items: items }).then(function(r){
+    if (!r.ok) { if (btnEl) btnEl.disabled = false; note('bm-'+partyId, r.json && r.json.error, 'err'); return; }
+    var receiptNo = r.json.receiptNo;
+    var pending = b.group.items.map(function(it){ return api('/api/intake/'+it.id+'/book', { receiptNo: receiptNo }); });
+    Promise.all(pending).then(function(rs){
+      /* 任何一条需求没转成「已开单」都必须喊出来,绝不静默——账链(C6)靠这个不断 */
+      var bad = rs.filter(function(x){ return !x.ok; });
+      if (bad.length) note('bm-'+partyId, '注意:' + bad.length + ' 条需求没转开单(' + ((bad[0].json && bad[0].json.error) || '未知原因') + '),清单里还会再见到它', 'err');
+      return api('/api/statements/daily', { customerId: partyId, dateKey: dkey(), bizDate: today(), openingCents: 0 }).then(function(s){
+        var msg = '已挂账 ' + receiptNo + ' 合计 ¥' + yuan(r.json.amountCents);
+        if (s.ok) msg += ';日账单 ' + s.json.no + ' 已生成,可发客户';
+        if (!bad.length) note('bm-'+partyId, msg, 'okk');
+        loadOverview();
+        setTimeout(loadBooking, 1400);
+      });
+    });
+  });
+}
+
+/* ---------- ③ 客户的账 ---------- */
+function loadAccounts(){
+  var el = document.getElementById('accounts');
+  el.innerHTML = '<div class="empty">正在把账翻出来…</div>';
+  var rows = [];
+  var jobs = CUSTOMERS.map(function(c){
+    return api('/api/customers/'+encodeURIComponent(c.id)+'/balance?today='+today()).then(function(r){
+      if (r.ok) rows.push({ c: c, bal: r.json.balanceCents, aging: r.json.aging });
+    });
+  });
+  Promise.all(jobs).then(function(){
+    rows.sort(function(a,b){ return b.bal - a.bal; });
+    var h = '';
+    rows.forEach(function(x){
+      var aging = x.bal <= 0 ? '<span class="chip good">账清爽</span>'
+        : x.aging.days === 0 ? '<span class="chip good">今天刚挂的账</span>'
+        : '<span class="chip ' + (x.aging.bucket === 'red' ? 'red' : x.aging.bucket === 'yellow' ? 'amber' : 'good') + '">欠了 ' + x.aging.days + ' 天</span>';
+      h += '<div class="acct" id="acct-' + esc(x.c.id) + '">'
+        + '<div class="acct-h" onclick="openTrace(\'' + esc(x.c.id) + '\')"><span class="nm">' + esc(x.c.name) + '</span>' + aging
+        + '<span class="bal"><span class="b1 num">¥' + yuan(x.bal) + '</span><br><span class="b2">点开看往来账</span></span></div>'
+        + '<div class="acct-x" id="ax-' + esc(x.c.id) + '"></div></div>';
+    });
+    el.innerHTML = h || '<div class="empty">还没有客户</div>';
+  });
+}
+function openTrace(pid){
+  var card = document.getElementById('acct-'+pid);
+  if (!card) return;
+  if (card.className.indexOf('open') >= 0) { card.className = 'acct'; return; }
+  document.querySelectorAll('.acct').forEach(function(a){ a.className = 'acct'; });
+  card.className = 'acct open';
+  var el = document.getElementById('ax-'+pid);
+  el.innerHTML = '<div class="empty">正在核对这一页账…</div>';
+  api('/api/customers/'+encodeURIComponent(pid)+'/trace?today='+today()).then(function(r){
+    if (!r.ok) { el.innerHTML = esc(r.json && r.json.error); return; }
+    var t = r.json; TRACES[pid] = t;
+    var h = '';
+    h += '<div class="verify-line ' + (t.verify.consistent ? 'ok' : 'bad') + '">'
+      + (t.verify.consistent ? '✓ 这页账机器刚核对过:逐笔流水加起来 = 台账 ¥' + yuan(t.verify.balanceCents) + ',分毫不差'
+        : '✕ 注意:这页账两条路径对不上(流水 ¥' + yuan(t.verify.ledgerCents) + ' / 台账 ¥' + yuan(t.verify.balanceCents) + '),别急着收钱,先查')
+      + '</div>';
+    /* 收一笔钱 */
+    h += '<div class="payrow"><input class="mini" style="width:110px" type="number" step="0.01" min="0" placeholder="收款(元)" id="pay-' + esc(pid) + '">'
+      + '<select id="pm-' + esc(pid) + '"><option>微信</option><option>现金</option><option>银行转账</option></select>'
+      + '<button class="btn sm" onclick="pay(\'' + esc(pid) + '\')">记一笔收款</button>'
+      + '<button class="btn ghost sm" onclick="monthly(\'' + esc(pid) + '\')">看月账</button>'
+      + '<span class="note" id="am-' + esc(pid) + '"></span></div>';
+    h += '<div class="mono-list" id="mv-' + esc(pid) + '" style="display:none"></div>';
+    /* 没冲清的单 */
+    if (t.openDeliveries.length) {
+      h += '<div style="margin:6px 0 4px;font-size:13px" class="mut">还没冲清的单:';
+      t.openDeliveries.forEach(function(o){ h += ' <span class="doc">' + esc(o.refId) + '</span><span class="num mut"> 剩¥' + yuan(o.openCents) + '</span> '; });
+      h += '</div>';
+    }
+    /* 往来时间线 */
+    h += '<div class="tblwrap"><table><tr><th>日子</th><th>单据</th><th>事</th><th class="r">金额</th><th>下落</th></tr>';
+    t.timeline.slice().reverse().forEach(function(e){
+      var doc = e.refId ? '<span class="doc">' + esc(e.refId) + '</span>' : '—';
+      var what = '', where = '';
+      if (e.type === 'delivery') {
+        what = '送货' + (e.receipt ? ' · ' + e.receipt.itemCount + ' 样' : '');
+        where = e.openCents === 0 ? '<span class="chip good">已收清</span>'
+          : (e.settledCents > 0 ? '<span class="chip amber num">收了¥' + yuan(e.settledCents) + ' 剩¥' + yuan(e.openCents) + '</span>'
+            : '<span class="chip gray num">没收,欠着¥' + yuan(e.openCents) + '</span>');
+      } else if (e.type === 'payment') {
+        what = '收款' + (e.memo ? '(' + esc(e.memo) + ')' : '');
+        var tg = (e.settles || []).map(function(s){ return (s.targetRef === '预收' ? '预收' : '冲 ' + s.targetRef) + ' ¥' + yuan(s.amountCents); });
+        where = '<span class="mut num" style="font-size:12.5px">' + esc(tg.join(' / ')) + '</span>';
+      } else if (e.type === 'opening') { what = '老账带入'; }
+      else { what = '调整'; where = '<span class="mut" style="font-size:12.5px">' + esc(e.memo || '') + '</span>'; }
+      h += '<tr><td class="num">' + esc(e.bizDate.slice(5).replace('-','.')) + '</td><td>' + doc + '</td><td>' + what + '</td>'
+        + '<td class="r num"><b>' + (e.amountCents < 0 ? '−' : '') + yuan(Math.abs(e.amountCents)) + '</b></td><td>' + where + '</td></tr>';
+    });
+    h += '</table></div>';
+    /* 单据一排 */
+    if (t.statements.length) {
+      h += '<div style="margin-top:8px;font-size:13px" class="mut">出过的账单:';
+      t.statements.forEach(function(s){ h += ' <span class="doc">' + esc(s.no) + '</span>'; });
+      h += '</div>';
+    }
+    el.innerHTML = h;
+  });
+}
+function pay(id){
+  var v = parseFloat((document.getElementById('pay-'+id) || {}).value);
+  if (!(v > 0)) { note('am-'+id, '先填金额', 'err'); return; }
+  var m = document.getElementById('pm-'+id).value;
+  api('/api/payments', { customerId: id, amountYuan: String(v), method: m, refId: 'pay'+Date.now(), bizDate: today() }).then(function(r){
+    if (!r.ok) { note('am-'+id, r.json && r.json.error, 'err'); return; }
+    loadAccounts(); loadOverview();
+    setTimeout(function(){ openTrace(id); }, 200);
+  });
+}
+function monthly(id){
+  var el = document.getElementById('mv-'+id);
+  if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+  api('/api/customers/'+encodeURIComponent(id)+'/monthly?from='+monthStart()+'&to='+today()).then(function(r){
+    if (!r.ok) return;
+    var h = '';
+    r.json.days.forEach(function(d){ h += '<div class="mrow num"><span>' + esc(d.date.slice(5).replace('-','.')) + '</span><span>= ' + yuan(d.cents) + '</span></div>'; });
+    h += '<div class="mrow total num"><span>本月合计</span><span>¥' + yuan(r.json.totalCents) + '</span></div>';
+    h += '<div class="mrow num"><span>本月已收</span><span>¥' + yuan(r.json.paidCents) + '</span></div>';
+    el.innerHTML = h || '本月还没有账';
+    el.style.display = 'block';
+  });
+}
+
+/* ---------- 小提示 ---------- */
+document.addEventListener('mousemove', function(ev){
+  var t = ev.target && ev.target.getAttribute && ev.target.getAttribute('data-tip');
+  var tip = document.getElementById('tip');
+  if (t) { tip.textContent = t; tip.style.display = 'block'; tip.style.left = (ev.clientX + 12) + 'px'; tip.style.top = (ev.clientY - 30) + 'px'; }
+  else tip.style.display = 'none';
+});
+
+/* ---------- 起步 ---------- */
+(function(){
+  var d = new Date();
+  document.getElementById('todayLabel').textContent = (d.getMonth()+1) + '月' + d.getDate() + '日';
+})();
+api('/api/customers').then(function(r){ if (r.ok) CUSTOMERS = r.json.customers || []; });
+api('/api/products').then(function(r){ if (r.ok) (r.json.products || []).forEach(function(p){ PRODUCTS[p.id] = p; }); loadOverview(); });
+if (window.speechSynthesis) speechSynthesis.getVoices();
+</script>

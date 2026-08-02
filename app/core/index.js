@@ -11,4 +11,5 @@ module.exports = {
   ...require('./allocation'),
   ...require('./statement'),
   ...require('./splitter'),
+  ...require('./prepare'),
 };

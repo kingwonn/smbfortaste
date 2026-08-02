@@ -11,6 +11,7 @@ const { recordPayment, aging } = require('../../core/allocation');
 const { generateStatement, markStatement, settlementReadiness, monthlyView } = require('../../core/statement');
 const { postDeliveryReceipt, confirmHeldReceipt } = require('../../core/delivery');
 const { createIntakeFromText, getTodolist, confirmIntake, dismissIntake, getConfirmed, bookIntake } = require('../../core/intake');
+const { suggestPrices, runAudit, getOverview, buildBriefing, traceCustomer } = require('../../core/prepare');
 const { nextNo } = require('../../core/numbering');
 const { seedTenant } = require('../seed');
 
@@ -148,6 +149,41 @@ app.post('/api/dev/seed', async (c) => {
   if (c.env.DEV_SEED !== '1') return c.json({ ok: false, error: '未开放' }, 403);
   const r = await seedTenant(c.get('store'), c.get('tenantId'));
   return c.json({ ok: true, ...r });
+});
+
+// ===== 备好引擎(design/17 四条铁律)=====
+// 今日总览:待办、预填好价的待记账、今日进出、欠账警报、七日走势、六项验证——系统备好,人只扫一眼
+app.get('/api/overview', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const q = c.req.query();
+  return c.json(await getOverview(store, { tenantId, bizDate: q.bizDate, today: q.today || q.bizDate }));
+});
+
+// 六项交叉验证(单独可调:任何页面任何时刻都能问"账对不对")
+app.get('/api/audit', async (c) => {
+  return c.json(await runAudit(c.get('store'), { tenantId: c.get('tenantId') }));
+});
+
+// 汇报稿:不想看就听——前端拿这段话用系统语音念
+app.get('/api/briefing', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const q = c.req.query();
+  const ov = await getOverview(store, { tenantId, bizDate: q.bizDate, today: q.today || q.bizDate });
+  return c.json(buildBriefing(ov));
+});
+
+// 客户360:一页看全一家店——每笔钱带单据链,页内独立交叉核对
+app.get('/api/customers/:id/trace', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  return c.json(await traceCustomer(store, { tenantId, partyId: c.req.param('id'), today: c.req.query('today') }));
+});
+
+// 单价三级记忆(记账台预填;names 逗号分隔)
+app.get('/api/price-suggest', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const q = c.req.query();
+  const names = String(q.names || '').split(',').filter(Boolean);
+  return c.json(await suggestPrices(store, { tenantId, partyId: q.customerId, names }));
 });
 
 // 记一笔收款(手工记款是一等公民,≤10秒流程的后端)

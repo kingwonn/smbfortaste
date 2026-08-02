@@ -13,14 +13,20 @@ app/
 │   ├── balance.js        # 内核② 应收/应付流水(direction 抽象)+物化余额+夜间重算校验
 │   ├── allocation.js     # 内核③ 收款FIFO分配+预收+手工改分配+账龄三色
 │   ├── statement.js      # 内核④ 日账单RZ/结算单DZ快照:幂等/冻结/表态留证/结算前置检查
+│   ├── delivery.js       # 明细行回执(品名|要货|实称|单价|金额,对齐实物单据 design/14)
+│   ├── intake.js         # 收单箱:粘贴/守护送来的文本 → 需求条目状态机(标红→确认→开单)
+│   ├── prepare.js        # 备好引擎(design/17 四条铁律):价格记忆/今日总览/六项交叉验证/汇报稿/客户360
 │   ├── splitter.js       # M0打靶② 批量贴单拆分POC(拿不准标红,绝不猜)
-│   └── test/             # 22 个测试,node --test 全绿
+│   └── test/             # 46 个测试,node --test 全绿
 ├── miniprogram/          # 微信小程序骨架(4个M1核心页:今晚要办/贴单/今日对账/拍回执)
+├── watcher/              # 收单守护提取层(design/16):会话快照增量识别,7 测试
 ├── server/               # Cloudflare Workers 服务层(Hono):后端控制面,见 design/10
-│   ├── src/index.js      # 路由:签收挂账(含差异闸门)/记款/日账单/表态/结算就绪/账龄 + Cron夜间重算
+│   ├── src/index.js      # 路由:签收挂账(含差异闸门)/记款/日账单/表态/结算就绪/账龄/收单/备好引擎四接口 + Cron夜间重算
+│   ├── src/workbench.js  # 老板娘工作台 v2(浏览器直开):今日总览/今晚要办/记账台/客户的账+听汇报
 │   ├── schema.sql        # D1 库表(JSON data + 生成列索引 + 唯一约束)
 │   ├── wrangler.toml     # 部署配置(D1/R2/Cron)
-│   └── test/api.test.js  # Hono 端到端(app.request + D1 模拟器)
+│   └── test/             # 9 个端到端测试(app.request + D1 模拟器 + 真实档案验收)
+├── web/taste-demo.html   # 体验版:真内核+工作台打包的自包含页面(tools/build-demo.js 生成,勿手改)
 └── project.config.json   # 微信开发者工具项目配置
 ```
 
@@ -31,8 +37,9 @@ app/
 ## 跑测试
 
 ```bash
-cd app/core && node --test     # 36 个:内核四件事(双存储)+拆单+明细行回执+月账视图
-cd app/server && node --test   # 6 个:服务层端到端+真实档案与真实订货消息验收
+cd app/core && node --test      # 46 个:内核四件事(双存储)+拆单+收单状态机+备好引擎
+cd app/server && node --test    # 9 个:服务层端到端+真实档案与真实订货消息验收+备好引擎四接口
+node --test 'app/watcher/test/*.test.js'   # 7 个:收单守护增量提取
 ```
 
 家用版(design/13 M1a)对齐实物(design/14):明细行=品名|要货|实称|单价|金额(`core/delivery.js`,
