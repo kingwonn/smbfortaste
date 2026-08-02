@@ -64,6 +64,8 @@ test('收单工作台页面:GET / 下发自包含 HTML', async () => {
   const res = await app.request('/', { method: 'GET' }, { DB: newMockD1() });
   assert.equal(res.status, 200);
   const html = await res.text();
-  assert.match(html, /收单工作台/);
+  assert.match(html, /家用版工作台/);
   assert.match(html, /今晚要办/);
+  assert.match(html, /记账台/);
+  assert.match(html, /客户的账/);
 });

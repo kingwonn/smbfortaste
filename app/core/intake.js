@@ -72,6 +72,27 @@ async function confirmIntake(store, intakeId, { lines, partyId } = {}) {
   });
 }
 
+// 已确认清单(记账台的输入:今晚确认过的需求,等着实称记价挂账)
+async function getConfirmed(store, { tenantId, bizDate }) {
+  const all = (await store.find('intakes', { eq: { tenantId, status: 'confirmed' } }))
+    .filter((it) => !bizDate || !it.bizDate || it.bizDate === bizDate);
+  const groups = new Map();
+  for (const it of all) {
+    const key = it.partyId;
+    if (!groups.has(key)) groups.set(key, { partyId: it.partyId, customerName: it.customerName, items: [] });
+    groups.get(key).items.push(it);
+  }
+  return [...groups.values()];
+}
+
+// 已开单(回执落账后,需求条目转 booked,不再出现在任何清单)
+async function bookIntake(store, intakeId, { receiptNo } = {}) {
+  const it = await store.get('intakes', intakeId);
+  if (!it) throw new Error('收单条目不存在');
+  if (it.status !== 'confirmed') throw new Error('只有已确认的条目才能转开单');
+  return store.cas('intakes', intakeId, it._v, { status: 'booked', receiptNo: receiptNo || null });
+}
+
 // 作废(重复/玩笑/撤单)
 async function dismissIntake(store, intakeId, reason) {
   const it = await store.get('intakes', intakeId);
@@ -79,4 +100,7 @@ async function dismissIntake(store, intakeId, reason) {
   return store.cas('intakes', intakeId, it._v, { status: 'dismissed', dismissReason: reason || null });
 }
 
-module.exports = { createIntakeFromText, getTodolist, confirmIntake, dismissIntake, loadSplitterCustomers };
+module.exports = {
+  createIntakeFromText, getTodolist, confirmIntake, dismissIntake,
+  getConfirmed, bookIntake, loadSplitterCustomers,
+};

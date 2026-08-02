@@ -10,7 +10,7 @@ const { applyEntry, getBalance, recalcAndVerify } = require('../../core/balance'
 const { recordPayment, aging } = require('../../core/allocation');
 const { generateStatement, markStatement, settlementReadiness, monthlyView } = require('../../core/statement');
 const { postDeliveryReceipt, confirmHeldReceipt } = require('../../core/delivery');
-const { createIntakeFromText, getTodolist, confirmIntake, dismissIntake } = require('../../core/intake');
+const { createIntakeFromText, getTodolist, confirmIntake, dismissIntake, getConfirmed, bookIntake } = require('../../core/intake');
 const { nextNo } = require('../../core/numbering');
 const { seedTenant } = require('../seed');
 
@@ -40,6 +40,13 @@ app.get('/api/customers', async (c) => {
   const store = c.get('store'); const tenantId = c.get('tenantId');
   const customers = await store.find('customers', { eq: { tenantId } });
   return c.json({ customers: customers.map((x) => ({ id: x.id, name: x.name, aliases: x.aliases || [] })) });
+});
+
+// 商品列表(记账台品名映射与单价参考)
+app.get('/api/products', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  const products = await store.find('products', { eq: { tenantId } });
+  return c.json({ products: products.map((p) => ({ id: p.id, name: p.name, unit: p.unit, weighable: !!p.weighable })) });
 });
 
 // 签收挂账(design/14 修订①):明细行照抄笔记本格式——品名|要货|实称|单价,金额服务端算;
@@ -114,6 +121,18 @@ app.post('/api/intake/:id/confirm', async (c) => {
   const store = c.get('store');
   const b = await c.req.json().catch(() => ({}));
   const r = await confirmIntake(store, c.req.param('id'), { lines: b.lines, partyId: b.partyId });
+  return c.json({ ok: true, status: r.status });
+});
+
+app.get('/api/intake/confirmed', async (c) => {
+  const store = c.get('store'); const tenantId = c.get('tenantId');
+  return c.json({ groups: await getConfirmed(store, { tenantId, bizDate: c.req.query('bizDate') }) });
+});
+
+app.post('/api/intake/:id/book', async (c) => {
+  const store = c.get('store');
+  const b = await c.req.json().catch(() => ({}));
+  const r = await bookIntake(store, c.req.param('id'), { receiptNo: b.receiptNo });
   return c.json({ ok: true, status: r.status });
 });
 
