@@ -8,7 +8,7 @@ const { D1Store } = require('../../core/store-d1');
 const { toCents } = require('../../core/money');
 const { applyEntry, getBalance, recalcAndVerify } = require('../../core/balance');
 const { recordPayment, aging } = require('../../core/allocation');
-const { generateStatement, markStatement, settlementReadiness, monthlyView } = require('../../core/statement');
+const { generateStatement, markStatement, settlementReadiness, monthlyView, dailyStatementFor } = require('../../core/statement');
 const { postDeliveryReceipt, confirmHeldReceipt } = require('../../core/delivery');
 const { createIntakeFromText, getTodolist, confirmIntake, dismissIntake, getConfirmed, bookIntake } = require('../../core/intake');
 const { suggestPrices, runAudit, getOverview, buildBriefing, traceCustomer } = require('../../core/prepare');
@@ -201,11 +201,10 @@ app.post('/api/payments', async (c) => {
 app.post('/api/statements/daily', async (c) => {
   const store = c.get('store'); const tenantId = c.get('tenantId');
   const b = await c.req.json();
-  const { stmt, created } = await generateStatement(store, {
-    tenantId, partyId: b.customerId, kind: 'RZ', periodKey: b.dateKey,
-    from: b.bizDate, to: b.bizDate, openingCents: b.openingCents | 0,
-  });
-  return c.json({ ok: true, created, no: stmt.no, closingCents: stmt.closingCents });
+  return c.json(await dailyStatementFor(store, {
+    tenantId, partyId: b.customerId, bizDate: b.bizDate, dateKey: b.dateKey,
+    openingCents: b.openingCents == null ? undefined : b.openingCents | 0,
+  }));
 });
 
 // 客户表态(确认/异议)与结算前置检查

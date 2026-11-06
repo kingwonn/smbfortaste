@@ -680,13 +680,10 @@ function bookGroup(partyId, btnEl){
       /* 任何一条需求没转成「已开单」都必须喊出来,绝不静默——账链(C6)靠这个不断 */
       var bad = rs.filter(function(x){ return !x.ok; });
       if (bad.length) note('bm-'+partyId, '注意:' + bad.length + ' 条需求没转开单(' + ((bad[0].json && bad[0].json.error) || '未知原因') + '),清单里还会再见到它', 'err');
-      return api('/api/statements/daily', { customerId: partyId, dateKey: dkey(), bizDate: today(), openingCents: 0 }).then(function(s){
-        var msg = '已挂账 ' + receiptNo + ' 合计 ¥' + yuan(r.json.amountCents);
-        if (s.ok) msg += ';日账单 ' + s.json.no + ' 已生成,可发客户';
-        if (!bad.length) note('bm-'+partyId, msg, 'okk');
-        loadOverview();
-        setTimeout(loadBooking, 1400);
-      });
+      /* 日账单不在这里出:一家一天可能送好几次,晚上在「客户的账」一次出齐 */
+      if (!bad.length) note('bm-'+partyId, '已挂账 ' + receiptNo + ' 合计 ¥' + yuan(r.json.amountCents) + ';晚上去「客户的账」出今天的日账单', 'okk');
+      loadOverview();
+      setTimeout(loadBooking, 1400);
     });
   });
 }
@@ -737,8 +734,10 @@ function openTrace(pid){
       + '<select id="pm-' + esc(pid) + '"><option>微信</option><option>现金</option><option>银行转账</option></select>'
       + '<button class="btn sm" onclick="pay(\\'' + esc(pid) + '\\')">记一笔收款</button>'
       + '<button class="btn ghost sm" onclick="monthly(\\'' + esc(pid) + '\\')">看月账</button>'
+      + '<button class="btn ghost sm" onclick="dailyStmt(\\'' + esc(pid) + '\\')">出今天的日账单</button>'
       + '<span class="note" id="am-' + esc(pid) + '"></span></div>';
     h += '<div class="mono-list" id="mv-' + esc(pid) + '" style="display:none"></div>';
+    h += '<div id="ds-' + esc(pid) + '" style="display:none;margin:8px 0"></div>';
     /* 没冲清的单 */
     if (t.openDeliveries.length) {
       h += '<div style="margin:6px 0 4px;font-size:13px" class="mut">还没冲清的单:';
@@ -783,6 +782,26 @@ function pay(id){
     loadAccounts(); loadOverview();
     setTimeout(function(){ openTrace(id); }, 200);
   });
+}
+function dailyStmt(id){
+  var el = document.getElementById('ds-'+id);
+  api('/api/statements/daily', { customerId: id, dateKey: dkey(), bizDate: today() }).then(function(r){
+    if (!r.ok) { note('am-'+id, r.json && r.json.error, 'err'); return; }
+    var s = r.json;
+    var h = '<div class="mut" style="font-size:13px;margin-bottom:4px">日账单 <span class="doc">' + esc(s.no) + '</span>'
+      + (s.created ? ' 刚出好' : ' 今天已出过') + ' · 复制下面这段发客户微信</div>';
+    if (s.stale) h += '<div class="verify-line bad">✕ 出单之后今天又记了 ¥' + yuan(s.missingCents)
+      + ' 的账,这张单里没有——已发出的单不改,这笔会出现在明天的"之前欠"里,给客户说一声</div>';
+    h += '<textarea class="mini" id="dst-' + esc(id) + '" readonly style="width:100%;height:230px;font-size:15px;line-height:1.6">' + esc(s.text) + '</textarea>'
+      + '<button class="btn sm" onclick="copyStmt(\\'' + esc(id) + '\\')">复制,去微信粘贴</button> <span class="note" id="dsn-' + esc(id) + '"></span>';
+    el.innerHTML = h; el.style.display = 'block';
+  });
+}
+function copyStmt(id){
+  var ta = document.getElementById('dst-'+id);
+  var done = function(){ note('dsn-'+id, '已复制', 'okk'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, function(){ ta.select(); document.execCommand('copy'); done(); });
+  else { ta.select(); document.execCommand('copy'); done(); }
 }
 function monthly(id){
   var el = document.getElementById('mv-'+id);

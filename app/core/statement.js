@@ -20,10 +20,11 @@ async function generateStatement(store, {
   const existing = await store.get('statements', key);
   if (existing) return { stmt: existing, created: false };
 
-  const entries = (await store.find('entries', {
-    eq: { tenantId, direction, partyId },
-    range: { field: 'bizDate', from, to },
-  })).filter((e) => e.type !== 'opening');
+  const all = await store.find('entries', { eq: { tenantId, direction, partyId } });
+  if (openingCents == null) {
+    openingCents = all.filter((e) => e.bizDate < from).reduce((s, e) => s + e.amountCents, 0);
+  }
+  const entries = all.filter((e) => e.bizDate >= from && e.bizDate <= to && e.type !== 'opening');
 
   let deliveryCents = 0; let paidCents = 0; let adjustCents = 0;
   const lines = [];
@@ -60,6 +61,47 @@ async function generateStatement(store, {
     if (raced) return { stmt: raced, created: false };
     throw e;
   }
+}
+
+// 日账单发客户的文字:行格式照抄她拢账本"品名 实称×单价=金额"(design/14),末尾带前欠与总欠。
+function dailyStatementText(stmt, { customerName, receipts }) {
+  const { formatYuan } = require('./money');
+  const y = (c) => formatYuan(c).replace(/\.00$/, '');
+  const [, m, d] = stmt.from.split('-').map(Number);
+  const out = [`${customerName} ${m}月${d}日 对账`];
+  for (const r of receipts) {
+    for (const l of r.items) {
+      out.push(`${l.name} ${l.qtyActual}${l.unit || ''}×${y(l.unitPriceCents)}=${y(l.amountCents)}`);
+    }
+  }
+  out.push(`今天合计:${y(stmt.deliveryCents)}元`);
+  if (stmt.adjustCents) out.push(`调整:${y(stmt.adjustCents)}元`);
+  if (stmt.paidCents) out.push(`今天已收:${y(stmt.paidCents)}元`);
+  if (stmt.openingCents) out.push(`之前欠:${y(stmt.openingCents)}元`);
+  out.push(`到今天共欠:${y(stmt.closingCents)}元`);
+  out.push('您看下没问题回个"好"就行,有不对的直接说。');
+  return out.join('\n');
+}
+
+// 出当天日账单(工作台/体验版共用):期初自动取前欠;快照已冻结后又有新流水则报 stale+差额,不许静默。
+async function dailyStatementFor(store, { tenantId, partyId, bizDate, dateKey, openingCents }) {
+  const { stmt, created } = await generateStatement(store, {
+    tenantId, partyId, kind: 'RZ', periodKey: dateKey, from: bizDate, to: bizDate, openingCents,
+  });
+  const all = await store.find('entries', { eq: { tenantId, direction: 'receivable', partyId } });
+  const nowNet = all.filter((e) => e.bizDate === bizDate && e.type !== 'opening').reduce((s, e) => s + e.amountCents, 0);
+  const snapNet = stmt.deliveryCents + stmt.adjustCents - stmt.paidCents;
+  const refs = new Set(stmt.lines.filter((l) => l.type === 'delivery').map((l) => l.refId));
+  const receipts = (await store.find('receipts', { eq: { tenantId } }))
+    .filter((r) => r.partyId === partyId && refs.has(r.receiptNo));
+  const cust = await store.get('customers', partyId);
+  return {
+    ok: true, created, no: stmt.no, key: stmt.id,
+    openingCents: stmt.openingCents, deliveryCents: stmt.deliveryCents, paidCents: stmt.paidCents,
+    adjustCents: stmt.adjustCents, closingCents: stmt.closingCents, lines: stmt.lines,
+    stale: nowNet !== snapNet, missingCents: nowNet - snapNet,
+    text: dailyStatementText(stmt, { customerName: (cust && cust.name) || partyId, receipts }),
+  };
 }
 
 // 表态闭环:确认(【看过了,没问题】)/ 默认生效(逾期未回应)/ 异议——全部留证。
@@ -118,4 +160,4 @@ async function monthlyView(store, { tenantId, partyId, from, to, direction = 're
   return { days, totalCents, paidCents };
 }
 
-module.exports = { generateStatement, markStatement, settlementReadiness, monthlyView, stmtKey };
+module.exports = { generateStatement, markStatement, settlementReadiness, monthlyView, stmtKey, dailyStatementText, dailyStatementFor };

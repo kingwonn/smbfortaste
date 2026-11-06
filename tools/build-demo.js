@@ -120,8 +120,7 @@ module.exports = { seedTenant: seedTenant };
       return { ok: true, receiptId: rr.receipt.id, receiptNo: rr.receipt.receiptNo, amountCents: rr.amountCents, held: rr.held };
     }
     if (u.base === '/api/statements/daily' && body) {
-      var g = await stmt.generateStatement(store, { tenantId: T, partyId: body.customerId, kind: 'RZ', periodKey: body.dateKey, from: body.bizDate, to: body.bizDate, openingCents: body.openingCents | 0 });
-      return { ok: true, created: g.created, no: g.stmt.no, closingCents: g.stmt.closingCents };
+      return stmt.dailyStatementFor(store, { tenantId: T, partyId: body.customerId, bizDate: body.bizDate, dateKey: body.dateKey });
     }
     if (u.base === '/api/payments' && body) {
       var pr = await alloc.recordPayment(store, { tenantId: T, partyId: body.customerId, amountCents: money.toCents(body.amountYuan), method: body.method, refId: body.refId, bizDate: body.bizDate });
