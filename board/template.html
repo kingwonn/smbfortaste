@@ -1,0 +1,400 @@
+<title>汇金源研发看板</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* 版式:账本式看板。先摆"要动的"(本周/等您/半截),再摆完成与排队;架构、演进、自演化在后。墨绿取自工作台品牌色 */
+:root{
+  --paper:#EEF2EF; --sheet:#FFFFFF; --ink:#18221D; --muted:#5B6A62; --faint:#8C9A92; --rule:#D5DED8;
+  --brand:#1D5B4C; --brand-soft:#DDEBE5;
+  --done:#2B7046; --done-bg:#E0EFE4; --doing:#946507; --doing-bg:#F5EBD3;
+  --next:#1D5B4C; --next-bg:#DDEBE5; --blocked:#A6362C; --blocked-bg:#F6E2DE;
+  --idle:#5B6A62; --idle-bg:#E6EBE8;
+  --display:"Noto Serif SC","Songti SC","STSong",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111815; --sheet:#18211D; --ink:#E3EAE6; --muted:#9AA9A1; --faint:#6F7D76; --rule:#2B3631;
+  --brand:#6DBFA4; --brand-soft:#1F332B;
+  --done:#7CC596; --done-bg:#183022; --doing:#E0B45A; --doing-bg:#2E2513;
+  --next:#6DBFA4; --next-bg:#1F332B; --blocked:#EE8C80; --blocked-bg:#35201D;
+  --idle:#9AA9A1; --idle-bg:#222C27; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111815; --sheet:#18211D; --ink:#E3EAE6; --muted:#9AA9A1; --faint:#6F7D76; --rule:#2B3631;
+  --brand:#6DBFA4; --brand-soft:#1F332B;
+  --done:#7CC596; --done-bg:#183022; --doing:#E0B45A; --doing-bg:#2E2513;
+  --next:#6DBFA4; --next-bg:#1F332B; --blocked:#EE8C80; --blocked-bg:#35201D;
+  --idle:#9AA9A1; --idle-bg:#222C27; color-scheme:dark}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
+.wrap{max-width:1240px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:clamp(26px,4vw,36px);font-weight:800}
+h2{font-size:clamp(20px,2.6vw,24px);font-weight:800}
+h3{font-size:16px;font-weight:600}
+p{margin:0;max-width:46em}
+a{color:var(--brand)}
+code,.mono{font-family:var(--mono);font-size:.86em;font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;
+  padding-bottom:16px;border-bottom:2px solid var(--ink)}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;margin-top:6px}
+.gate{display:flex;align-items:center;gap:10px;padding:8px 14px;font-weight:700;font-size:14px;border-radius:3px}
+.gate.green{background:var(--done-bg);color:var(--done)}
+.gate.red{background:var(--blocked-bg);color:var(--blocked)}
+.gate .dot{width:9px;height:9px;border-radius:50%;background:currentColor}
+
+.alarm{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline;margin-top:16px;padding:14px 16px;
+  background:var(--blocked-bg);color:var(--ink);border-left:4px solid var(--blocked)}
+.alarm b.big{font-family:var(--mono);font-size:30px;color:var(--blocked);line-height:1;grid-row:span 2}
+.alarm .t{font-weight:700}
+.alarm .s{font-size:14px;color:var(--muted)}
+
+.tally{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tally .n{display:flex;align-items:baseline;gap:8px;padding:6px 12px;background:var(--sheet);border:1px solid var(--rule)}
+.tally .n b{font-family:var(--mono);font-size:18px}
+.tally .n span{font-size:13px;color:var(--muted)}
+
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;align-items:center}
+.filters .lbl{font-size:13px;color:var(--muted);margin-right:4px}
+.chipbtn{border:1px solid var(--rule);background:var(--sheet);color:var(--muted);padding:3px 11px;font-size:13px;cursor:pointer;border-radius:999px}
+.chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+section{margin-top:36px;display:grid;gap:14px}
+.sec-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.sec-h .s{font-size:13px;color:var(--muted)}
+
+.act{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.col{min-width:0;display:grid;gap:10px;align-content:start}
+.col-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding-bottom:6px;border-bottom:2px solid currentColor}
+.col-h .c{font-family:var(--mono);font-weight:600;margin-left:auto}
+.col.next .col-h{color:var(--next)} .col.blocked .col-h{color:var(--blocked)} .col.doing .col-h{color:var(--doing)}
+
+.card{background:var(--sheet);border:1px solid var(--rule);padding:11px 13px;display:grid;gap:6px;min-width:0}
+.card .row1{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.card .id{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--muted)}
+.card .lane{font-size:12px;color:var(--muted);margin-left:auto}
+.card .title{font-weight:700;font-size:15px;line-height:1.45}
+.card .why{font-size:13px;color:var(--muted)}
+.card .note{font-size:13px;padding:5px 8px;background:var(--paper)}
+.card .who{font-size:12.5px;font-weight:700;color:var(--blocked)}
+.legs{display:flex;flex-wrap:wrap;gap:5px}
+.leg{font-size:12px;padding:1px 7px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
+.leg.test{border-color:transparent;background:var(--done-bg);color:var(--done);font-weight:700}
+.leg.shop{border-color:transparent;background:var(--doing-bg);color:var(--doing);font-weight:700}
+.leg.todo{border-style:dashed;color:var(--blocked);border-color:var(--blocked)}
+details.legd summary{font-size:12px;color:var(--muted);cursor:pointer;list-style:none;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+details.legd summary::-webkit-details-marker{display:none}
+details.legd ul{margin:6px 0 0;padding-left:1.1em;font-size:12.5px;color:var(--muted)}
+details.legd li{margin:2px 0;overflow-wrap:anywhere}
+
+.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.lanebox{background:var(--sheet);border:1px solid var(--rule);padding:10px 14px;min-width:0}
+.lanebox h3{font-family:var(--body);font-size:14px;font-weight:700;display:flex;gap:8px;align-items:baseline}
+.lanebox h3 .c{font-family:var(--mono);color:var(--muted);font-weight:500}
+.line{display:grid;grid-template-columns:3.2em 1fr auto;gap:8px;align-items:baseline;padding:6px 0;border-top:1px dashed var(--rule);font-size:14px}
+.line:first-of-type{border-top:0}
+.line .id{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.line .tt{min-width:0}
+.line .tt small{display:block;color:var(--muted);font-size:12.5px}
+.line .lg{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.wont .tt{text-decoration:line-through;text-decoration-color:var(--faint)}
+
+pre.mermaid{background:var(--sheet);border:1px solid var(--rule);padding:16px;overflow-x:auto;margin:0}
+.two{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+.panel{background:var(--sheet);border:1px solid var(--rule);padding:14px 16px;min-width:0}
+.panel ul{margin:0;padding-left:1.2em}
+.panel li{margin:4px 0}
+.tbl{overflow-x:auto;border:1px solid var(--rule);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px;line-height:1.55}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+th{font-size:12.5px;font-weight:700;color:var(--muted);background:var(--paper);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;white-space:nowrap}
+.st{display:inline-block;font-size:12px;font-weight:700;padding:1px 7px;white-space:nowrap}
+.st.ok{background:var(--done-bg);color:var(--done)} .st.half{background:var(--doing-bg);color:var(--doing)}
+.st.no{background:var(--blocked-bg);color:var(--blocked)} .st.idle{background:var(--idle-bg);color:var(--idle)}
+.verdict{border-left:4px solid var(--brand);background:var(--brand-soft);padding:14px 18px;display:grid;gap:8px}
+.verdict p{max-width:none}
+.lessons{display:grid;gap:0}
+.lessons div{display:grid;grid-template-columns:3em 1fr;gap:10px;padding:7px 0;border-top:1px dashed var(--rule);font-size:14px}
+.lessons .id{font-family:var(--mono);color:var(--brand);font-weight:600}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+footer p{max-width:none}
+@media (max-width:560px){.line{grid-template-columns:3em 1fr}.line .lg{grid-column:2;justify-content:flex-start}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>汇金源研发看板</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="gate" id="gate"></div>
+  </header>
+  <div class="alarm" id="alarm" hidden></div>
+  <div class="tally" id="tally"></div>
+  <div class="filters" id="filters"><span class="lbl">按环节看</span></div>
+
+  <section>
+    <div class="sec-h"><h2>要动的</h2><span class="s">本周要做、等您或妹妹、做了一半</span></div>
+    <div class="act" id="act"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>已完成</h2><span class="s">每张都挂着验收腿;"测试"由 gate 自动跑,"走查"是人工在浏览器里验过</span></div>
+    <div class="lanes" id="done"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>排队与不做</h2><span class="s">排队的按 LESSONS L7:没有店里的真实反馈前不开新功能卡</span></div>
+    <div class="lanes" id="later"></div>
+  </section>
+
+  <section id="arch">
+    <div class="sec-h"><h2>系统架构</h2><span class="s">实线是在用的,虚线是写好没上线或还没做的</span></div>
+    <div class="two">
+<pre class="mermaid">
+flowchart TB
+  subgraph IN["入口"]
+    WX["客户照旧发微信<br/>文字、语音"]
+    PASTE["老板娘复制粘贴"]
+    WATCH["收单守护<br/>提取层已做,捕获层未做"]
+    WB["老板娘工作台<br/>浏览器,四个页签"]
+    DEMO["体验版<br/>同一界面加真内核"]
+    MP["小程序<br/>只有骨架"]
+  end
+  subgraph SV["服务层 app/server · Hono"]
+    RUN["单机 run.js<br/>sqlite 文件、每日备份、口令"]
+    CF["Cloudflare Workers<br/>D1、R2、Cron"]
+  end
+  subgraph CORE["内核 app/core · 平台无关、零依赖"]
+    ACC["账务四件事<br/>取号、流水余额、收款分配、账单快照"]
+    BIZ["业务<br/>回执、收单箱、拆单(规则或 AI)"]
+    PREP["备好引擎<br/>价格记忆、总览、六项验证、汇报、往来账"]
+  end
+  subgraph ST["存储适配"]
+    MEM["MemoryStore<br/>测试与体验版"]
+    D1["D1Store<br/>本地 sqlite 或 CF D1"]
+  end
+  WX --> PASTE --> WB
+  WX -.-> WATCH -.-> WB
+  WB --> RUN
+  WB -.-> CF
+  MP -.-> CF
+  RUN --> CORE
+  CF -.-> CORE
+  DEMO --> CORE
+  CORE --> MEM
+  CORE --> D1
+</pre>
+      <div class="panel">
+        <h3>贯穿各层的规矩</h3>
+        <ul>
+          <li>金额只用整数分,浮点进不了账</li>
+          <li>流水只追加;改账走调整,必须写原因和经手人</li>
+          <li>单据链:回执 HZ → 日账单 RZ → 结算单 DZ,每笔钱都能追到单据</li>
+          <li>拿不准就标红,改好才许确认</li>
+          <li>AI 只碰"话"(拆单、话术),数字归确定性代码,发给客户的消息由人点</li>
+          <li>每次打开总览都跑一遍六项交叉验证</li>
+          <li>内核不碰平台:换运行时(国内云、单机)内核零改动</li>
+        </ul>
+      </div>
+    </div>
+    <h3>验证分层</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>层</th><th>验什么</th><th>现在</th></tr></thead>
+      <tbody>
+        <tr><td>L0 内核</td><td>账务、拆单、备好引擎的单元测试,内存与 D1 双存储</td><td><span class="st ok">gate 自动跑</span></td></tr>
+        <tr><td>L1 接口</td><td>服务层端到端,D1 模拟器,真实档案与真实订货消息</td><td><span class="st ok">gate 自动跑</span></td></tr>
+        <tr><td>L2 浏览器</td><td>真浏览器把贴单到收款走一遍</td><td><span class="st half">人工触发,脚本未入库</span></td></tr>
+        <tr><td>L3 店里</td><td>妹妹每晚真实对账,三个数前后对比</td><td><span class="st no">0 天</span></td></tr>
+        <tr><td>L4 对方</td><td>饭店老板收到日账单回"好"</td><td><span class="st no">未开始</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">层与层不互相冒充:L0 到 L2 全绿,只证明代码按设计工作,不证明她用着顺手。</p>
+  </section>
+
+  <section id="evo">
+    <div class="sec-h"><h2>演进空间</h2><span class="s">每一步都写了触发条件;条件不满足就不动</span></div>
+    <div class="tbl"><table>
+      <thead><tr><th>层</th><th>现在</th><th>下一步与触发条件</th><th>远期</th><th>不做</th></tr></thead>
+      <tbody>
+        <tr><td>收单入口</td><td>复制粘贴,自动拆单</td><td>收单守护捕获层<br/><small class="muted">触发:试用中粘贴成了负担</small></td><td>公众号收单、照片识读、客户零安装对账页</td><td>微信 hook、协议机器人</td></tr>
+        <tr><td>界面</td><td>浏览器工作台,四个页签</td><td>打折与表态按钮<br/><small class="muted">触发:已到,本周</small></td><td>配送员小程序拍照签收、随口问账</td><td>任何需要客户装东西的方案</td></tr>
+        <tr><td>运行</td><td>店里电脑单机,数据一个文件</td><td>Cloudflare 云端<br/><small class="muted">触发:拿到 Token 且登录权限做完</small></td><td>多店:数据层已按 tenantId 隔离</td><td>自建机房</td></tr>
+        <tr><td>账务内核</td><td>取号、流水、分配、账单、六项验证</td><td>结算周期驱动出单、现金流预报<br/><small class="muted">触发:试用一个月后</small></td><td>军师催款(规则加话术)、行业模板(海鲜、蔬菜)</td><td>供应链金融、撮合抽佣</td></tr>
+        <tr><td>存储</td><td>sqlite 文件 / D1</td><td>D1<br/><small class="muted">触发:上云</small></td><td>国内运行时(大陆连通性不达标时)</td><td>换掉内核的数据契约</td></tr>
+        <tr><td>AI</td><td>规则拆单,可选 AI 拆单带幻觉拦截</td><td>拆单改错沉淀成本地词库<br/><small class="muted">触发:积累到真实改错</small></td><td>催款话术、意图识别、店里电脑跑本地小模型</td><td>AI 算账、改账、自动发消息</td></tr>
+        <tr><td>研发流程</td><td>本看板:账本、gate、棘轮、LESSONS</td><td>每晚把她改过的拆单变成新测试,gate 过了提给您批<br/><small class="muted">触发:试用产生真实改错</small></td><td>异模复核专门写"骗过对账腿的偷懒实现"</td><td>无真实输入的定时自转</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="dsh">
+    <div class="sec-h"><h2>能不能用 dsh 这套自演化逻辑</h2><span class="s">对照 Jarvis 母体蓝图与 dsh 内网协同方案</span></div>
+    <div class="verdict">
+      <p><b>逻辑能用,今天已经用上了一半;工具不用换;自转先别开。</b></p>
+      <p>dsh 在 Jarvis 那边被选中,是因为数据只能放内网。汇金源没有这个约束,而 dsh 还是预览版(11 周 38 个预发布、没有终端界面、审批只有"允许一次")。这里继续用 Claude Code 执行,只借它的做法。</p>
+      <p>最该借的是那份蓝图对自己的批判:<b>自转不等于前进</b>。它跑了 13 张卡,处理的真实问题是 0;汇金源是同一个症状:19 篇设计、64 项测试,店里真实使用 0 天。</p>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Jarvis / dsh 的做法</th><th>在汇金源怎么落</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>唯一账本:git 里一卡一条</td><td><code>board/cards.json</code>,本页只是它的视图</td><td><span class="st ok">今天建</span></td></tr>
+        <tr><td>完成只有一个定义:gate</td><td><code>node tools/board.js check</code>:账本自洽、腿都在、全量测试绿、无 NUL 字节</td><td><span class="st ok">今天建</span></td></tr>
+        <tr><td>验收腿</td><td>测试挂到卡上;店里试用也是腿(L3)</td><td><span class="st ok">今天挂上</span></td></tr>
+        <tr><td>门槛只紧不松</td><td>测试数只增不减(<code>board/ratchet.json</code>);C4 今天加严,能抓住"期初写错"</td><td><span class="st ok">今天做</span></td></tr>
+        <tr><td>LESSONS 晋升棘轮</td><td><code>LESSONS.md</code> 7 条真实踩过的坑,每条对应一条腿</td><td><span class="st ok">今天建</span></td></tr>
+        <tr><td>人只在三道门禁出现</td><td>方向:您定卡;数据:AI 不碰金额;对外:发给客户的消息由人点</td><td><span class="st ok">产品里早有</span></td></tr>
+        <tr><td>被测不能自证:异模复核</td><td>让另一个模型专门写骗过对账腿的偷懒实现,先拿对账类腿练</td><td><span class="st half">还没做</span></td></tr>
+        <tr><td>验证分层 E0–E5</td><td>L0 内核到 L4 对方确认</td><td><span class="st ok">今天写明</span></td></tr>
+        <tr><td>定时 loop 自转、5 人协作层</td><td>现在不开:没有真实输入,一个人用</td><td><span class="st idle">不搬</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="two">
+      <div class="panel">
+        <h3>汇金源适合的自演化形态</h3>
+        <ul>
+          <li><b>输入</b>:妹妹每晚在标红处改过的拆单、退回的账单、她的原话</li>
+          <li><b>变成腿</b>:每条改错转成一条拆单测试语料,每次投诉转成一条对账测试</li>
+          <li><b>执行</b>:改词库或代码,gate 全绿才提交</li>
+          <li><b>门禁</b>:您早上批合并;金额规则只紧不松</li>
+        </ul>
+        <p class="muted" style="margin-top:8px">产品自己也在演化:价格记忆已经在学,语料飞轮和催款规则会跟上。学到的东西一律过确认闸,和研发 gate 是同一个思路。</p>
+      </div>
+      <div class="panel">
+        <h3>什么时候开 loop</h3>
+        <ul>
+          <li>店里连续用满一周(V01)</li>
+          <li>攒到至少 20 条真实改错</li>
+          <li>先手动跑三晚"改错转腿",确认值得再定时</li>
+        </ul>
+        <p class="muted" style="margin-top:8px">证伪:开 loop 两周后,她标红改错的次数没有下降,就停掉,回到人工按反馈修。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="lessons">
+    <div class="sec-h"><h2>LESSONS</h2><span class="s">真实踩过的坑,每条都有腿守着,详见仓库根目录 LESSONS.md</span></div>
+    <div class="panel lessons" id="lessonList"></div>
+  </section>
+
+  <footer><p id="foot"></p></footer>
+</div>
+
+<script>
+var DATA = /*__BOARD_DATA__*/null;
+(function () {
+  var B = DATA.board, G = DATA.gate;
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var lane = 'all';
+  try { lane = localStorage.getItem('board-lane') || 'all'; } catch (e) {}
+
+  document.getElementById('meta').textContent = '分支 ' + DATA.branch + ' · 提交 ' + DATA.commit + ' · 生成于 ' + DATA.generatedAt;
+  var gate = document.getElementById('gate');
+  var t = G.tests || {};
+  gate.className = 'gate ' + (G.green ? 'green' : 'red');
+  gate.innerHTML = '<span class="dot"></span>gate ' + (G.green ? '绿' : '红') + ' · 测试 ' + (t.pass || 0) + ' 过 ' + (t.fail || 0) + ' 失败 · 下限 ' + G.minTests;
+  if (!G.green) gate.title = G.problems.join('\n');
+
+  var real = B.cards.filter(function (c) { return c.lane === '真实验证' && c.status !== 'done'; });
+  if (real.length) {
+    var a = document.getElementById('alarm');
+    a.hidden = false;
+    a.innerHTML = '<b class="big">' + (B.realUseDays || 0) + ' 天</b><span class="t">店里真实使用天数。' + real.map(function (c) { return c.id + ' 等' + esc(c.who); }).join(',') + '</span>'
+      + '<span class="s">没有店里的反馈前,只补对账闭环的缺口,不开新功能卡(LESSONS L7)</span>';
+  }
+
+  var count = {};
+  B.cards.forEach(function (c) { count[c.status] = (count[c.status] || 0) + 1; });
+  document.getElementById('tally').innerHTML = Object.keys(B.statuses).map(function (k) {
+    return '<div class="n"><b>' + (count[k] || 0) + '</b><span>' + esc(B.statuses[k]) + '</span></div>';
+  }).join('');
+
+  var f = document.getElementById('filters');
+  ['all'].concat(B.lanes).forEach(function (l) {
+    var b = document.createElement('button');
+    b.className = 'chipbtn'; b.type = 'button'; b.id = 'lane-' + (l === 'all' ? 'all' : B.lanes.indexOf(l));
+    b.textContent = l === 'all' ? '全部' : l;
+    b.setAttribute('aria-pressed', String(l === lane));
+    b.onclick = function () {
+      lane = l;
+      try { localStorage.setItem('board-lane', l); } catch (e) {}
+      f.querySelectorAll('.chipbtn').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      render();
+    };
+    f.appendChild(b);
+  });
+
+  function legChips(c) {
+    var tests = c.legs.filter(function (l) { return l.t === 'test'; }).length;
+    var h = '';
+    if (tests) h += '<span class="leg test">测试 ' + tests + '</span>';
+    c.legs.forEach(function (l) {
+      if (l.t === 'browser') h += '<span class="leg">走查</span>';
+      if (l.t === 'shop') h += '<span class="leg shop">店里</span>';
+      if (l.t === 'doc') h += '<span class="leg">文档</span>';
+      if (l.t === 'todo') h += '<span class="leg todo">待写</span>';
+    });
+    if (!c.legs.length) h += '<span class="leg">还没有腿</span>';
+    return h;
+  }
+  function legList(c) {
+    if (!c.legs.length) return '';
+    return '<ul>' + c.legs.map(function (l) {
+      if (l.t === 'test') return '<li><code>' + esc(l.file) + '</code> · ' + esc(l.name) + '</li>';
+      if (l.t === 'doc') return '<li>文档 <code>' + esc(l.file) + '</code></li>';
+      return '<li>' + ({ browser: '走查:', shop: '店里:', todo: '待写:' }[l.t] || '') + esc(l.how) + '</li>';
+    }).join('') + '</ul>';
+  }
+  function card(c) {
+    return '<article class="card">'
+      + '<div class="row1"><span class="id">' + esc(c.id) + '</span><span class="lane">' + esc(c.lane) + '</span></div>'
+      + '<div class="title">' + esc(c.title) + '</div>'
+      + (c.who ? '<div class="who">等 ' + esc(c.who) + '</div>' : '')
+      + '<div class="why">' + esc(c.why) + '</div>'
+      + (c.note ? '<div class="note">' + esc(c.note) + '</div>' : '')
+      + '<details class="legd"><summary>' + legChips(c) + '</summary>' + legList(c) + '</details>'
+      + '</article>';
+  }
+  function line(c) {
+    return '<div class="line' + (c.status === 'wont' ? ' wont' : '') + '"><span class="id">' + esc(c.id) + '</span>'
+      + '<span class="tt">' + esc(c.title) + (c.note ? '<small>' + esc(c.note) + '</small>' : '') + '</span>'
+      + '<span class="lg">' + (c.status === 'wont' ? '<span class="leg">' + esc(c.why) + '</span>' : legChips(c)) + '</span></div>';
+  }
+  function byLane(cards) {
+    var g = {};
+    cards.forEach(function (c) { (g[c.lane] = g[c.lane] || []).push(c); });
+    return B.lanes.filter(function (l) { return g[l]; }).map(function (l) {
+      return '<div class="lanebox"><h3>' + esc(l) + '<span class="c">' + g[l].length + '</span></h3>' + g[l].map(line).join('') + '</div>';
+    }).join('');
+  }
+  function render() {
+    var vis = B.cards.filter(function (c) { return lane === 'all' || c.lane === lane; });
+    var cols = [['next', '本周要做'], ['blocked', '等您 / 妹妹'], ['doing', '做了一半']];
+    document.getElementById('act').innerHTML = cols.map(function (k) {
+      var cs = vis.filter(function (c) { return c.status === k[0]; });
+      return '<div class="col ' + k[0] + '"><div class="col-h">' + k[1] + '<span class="c">' + cs.length + '</span></div>'
+        + (cs.length ? cs.map(card).join('') : '<p class="muted" style="font-size:13px">这一栏没有</p>') + '</div>';
+    }).join('');
+    var done = vis.filter(function (c) { return c.status === 'done'; });
+    document.getElementById('done').innerHTML = done.length ? byLane(done) : '<p class="muted">这个环节还没有完成项</p>';
+    var later = vis.filter(function (c) { return c.status === 'backlog' || c.status === 'wont'; });
+    document.getElementById('later').innerHTML = later.length ? byLane(later) : '<p class="muted">这个环节没有排队项</p>';
+  }
+  render();
+
+  document.getElementById('lessonList').innerHTML = DATA.lessons.map(function (l) {
+    return '<div><span class="id">' + esc(l.id) + '</span><span>' + esc(l.title) + '</span></div>';
+  }).join('');
+  document.getElementById('foot').innerHTML = '账本在仓库 <code>board/cards.json</code>;改完跑 <code>node tools/board.js html</code> 重新生成本页。'
+    + '完成的唯一定义是 <code>node tools/board.js check</code> 为绿。';
+})();
+</script>

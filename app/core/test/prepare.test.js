@@ -184,6 +184,21 @@ test('凭空挂账(流水引用不存在的回执)逃不过 C3', async () => {
   assert.match(c3.issues[0], /HZ20260802-9999 不存在/);
 });
 
+test('日账单期初写错(等式照样成立)逃不过 C4:期初必须等于账本里之前的欠款', async () => {
+  const store = await base();
+  const item = [{ name: '姜', unit: '斤', qtyOrdered: 10, qtyActual: 10, unitPriceCents: toCents('2') }];
+  await postDeliveryReceipt(store, { tenantId: T, partyId: 'c_jx', bizDate: '2026-08-01', dateKey: '20260801', items: item });
+  await postDeliveryReceipt(store, { tenantId: T, partyId: 'c_jx', bizDate: '2026-08-02', dateKey: '20260802', items: item });
+  // 11/6 的真实缺陷形态:期初被写死成 0,期末=0+20=20,等式自洽,但真实欠 40
+  const { stmt } = await generateStatement(store, {
+    tenantId: T, partyId: 'c_jx', kind: 'RZ', periodKey: '20260802', from: '2026-08-02', to: '2026-08-02', openingCents: 0,
+  });
+  const c4 = (await runAudit(store, { tenantId: T })).checks.find((c) => c.id === 'C4');
+  assert.equal(c4.pass, false);
+  assert.equal(c4.issues.length, 1);
+  assert.match(c4.issues[0], new RegExp(`${stmt.no} 期初 0\\.00 ≠ 账本里之前的欠款 20\\.00`));
+});
+
 test('客户360:每笔钱带单据链,收款说清冲了哪张单,页内独立交叉核对', async () => {
   const store = await base();
   // 佳湘:两张回执 + 一笔 30 元收款(FIFO 先冲最老一张)

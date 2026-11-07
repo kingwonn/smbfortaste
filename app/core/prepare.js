@@ -105,11 +105,18 @@ async function runAudit(store, { tenantId }) {
   }
   add('C3', '每笔挂账都有回执,金额一致', c3, deliveryByRef.size);
 
-  // C4 账单快照对得上:期末=期初+送货+调整-收款,且明细行合计与三项分解一致
+  // C4 账单快照对得上:期末=期初+送货+调整-收款,明细行合计与三项分解一致,
+  // 且期初=流水里出单日之前的欠款(只查等式会放过"期初写错"——LESSONS L3)
   const c4 = [];
   for (const s of statements) {
     if (s.closingCents !== s.openingCents + s.deliveryCents + s.adjustCents - s.paidCents) {
       c4.push(`${s.no} 期末 ${formatYuan(s.closingCents)} ≠ 期初+送货+调整-收款`);
+    }
+    const before = entries
+      .filter((e) => e.partyId === s.partyId && e.direction === s.direction && e.bizDate < s.from)
+      .reduce((sum, e) => sum + e.amountCents, 0);
+    if (s.openingCents !== before) {
+      c4.push(`${s.no} 期初 ${formatYuan(s.openingCents)} ≠ 账本里之前的欠款 ${formatYuan(before)}`);
     }
     let d = 0, p = 0, adj = 0;
     for (const l of s.lines || []) {

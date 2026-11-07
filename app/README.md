@@ -37,9 +37,10 @@ app/
 ## 跑测试
 
 ```bash
-cd app/core && node --test      # 46 个:内核四件事(双存储)+拆单+收单状态机+备好引擎
-cd app/server && node --test    # 9 个:服务层端到端+真实档案与真实订货消息验收+备好引擎四接口
-node --test 'app/watcher/test/*.test.js'   # 7 个:收单守护增量提取
+node tools/board.js check       # gate:完成的唯一定义(全量测试+账本腿+测试数棘轮+NUL 检查),见 design/20
+cd app/core && node --test      # 内核四件事(双存储)+拆单+收单状态机+备好引擎
+cd app/server && node --test    # 服务层端到端+真实档案与真实订货消息验收+日账单
+node --test 'app/watcher/test/*.test.js'   # 收单守护增量提取
 ```
 
 家用版(design/13 M1a)对齐实物(design/14):明细行=品名|要货|实称|单价|金额(`core/delivery.js`,
