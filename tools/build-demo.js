@@ -73,7 +73,7 @@ module.exports = { seedTenant: seedTenant };
     await receipt(SLD, [['香菜', 2, 2.2, '斤', '7.5'], ['桂皮', 1, 1, '斤', '12']]);
     // 佳湘现结:昨晚扫码把 r1 全付清(核销闭环的活例子)
     await alloc.recordPayment(store, { tenantId: T, partyId: JX, amountCents: r1.amountCents, method: '微信', refId: 'pay_demo_1', bizDate: y });
-    await stmt.generateStatement(store, { tenantId: T, partyId: JX, kind: 'RZ', periodKey: yk, from: y, to: y, openingCents: 0 });
+    await stmt.generateStatement(store, { tenantId: T, partyId: JX, kind: 'RZ', periodKey: yk, from: y, to: y });
     // 老欠账:黄小馆 393.53 欠了 62 天(红);二建 120 欠了 35 天(黄)
     await bal.applyEntry(store, { tenantId: T, partyId: HX, type: 'opening', amountCents: money.toCents('393.53'), refType: 'opening', refId: 'QC-hx', bizDate: ld(-62) });
     await bal.applyEntry(store, { tenantId: T, partyId: EJ, type: 'opening', amountCents: money.toCents('120'), refType: 'opening', refId: 'QC-ej', bizDate: ld(-35) });
