@@ -47,6 +47,9 @@
       "legs": [
         { "t": "test", "file": "app/core/test/splitter-ai.test.js", "name": "AI 挂了/输出垃圾" }
       ] },
+    { "id": "R09", "lane": "收单", "status": "backlog", "title": "店里的 AI 接国内可用的模型(DeepSeek API)",
+      "why": "Anthropic API 不对中国大陆开放;AI 拆单本来就与模型无关,接一个适配函数即可",
+      "note": "需要 DeepSeek API Key;接上后拆单仍过幻觉拦截和确认闸", "legs": [] },
     { "id": "R07", "lane": "收单", "status": "backlog", "title": "照片、手写单识读", "why": "design/15 第3层", "legs": [] },
     { "id": "R08", "lane": "收单", "status": "backlog", "title": "公众号官方收单(语音自带转写)", "why": "唯一合规的全自动通道(design/15 第4层)", "legs": [] },
 
@@ -101,6 +104,9 @@
         { "t": "test", "file": "app/core/test/statement.test.js", "name": "表态留证" },
         { "t": "todo", "how": "界面三个按钮 + 端到端测试" }
       ] },
+    { "id": "D11", "lane": "对账", "status": "done", "title": "回放一晚:真实订货原文走完全链,发给客户的日账单文字逐字比对快照",
+      "why": "借 DeepSeek Harness 的录制会话快照:用户看得见的输出一变就红,重录要人审",
+      "legs": [ { "t": "test", "file": "app/server/test/evening-replay.test.js", "name": "回放一晚" } ] },
     { "id": "D06", "lane": "对账", "status": "done", "title": "月账极简式:日期=金额 + 合计",
       "why": "照抄店里月账页(design/14)",
       "legs": [ { "t": "test", "file": "app/core/test/delivery.test.js", "name": "月账极简视图" } ] },
@@ -173,6 +179,9 @@
     { "id": "I05", "lane": "基础设施", "status": "blocked", "who": "您", "title": "云端版:部署到 Cloudflare,任何设备打开",
       "why": "后端放在 CF 上", "note": "需要 Cloudflare API Token", "legs": [] },
     { "id": "I06", "lane": "基础设施", "status": "backlog", "title": "登录与权限(云端版前必须做)", "why": "index.js 里还是 TODO;配送员屏蔽账务", "legs": [] },
+    { "id": "I09", "lane": "基础设施", "status": "backlog", "title": "配置补丁式扩展:新规则先在体验版沙箱回放真实夜晚,全绿再由您批准装进店里",
+      "why": "借 DeepSeek Harness 的 Creator 模式(沙箱试跑 + 两次人工批准),只用于配置,不碰账务代码",
+      "legs": [] },
     { "id": "I07", "lane": "基础设施", "status": "backlog", "title": "全量数据一键导出 Excel", "why": "数据是她的(M1 门禁⑦)", "legs": [] },
     { "id": "I08", "lane": "基础设施", "status": "doing", "title": "微信小程序(老板/配送员两个角色)", "why": "小程序、电脑端都需要——您的原话", "note": "四个页面骨架,未部署未真机", "legs": [] },
 

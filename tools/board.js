@@ -37,7 +37,7 @@ function lintLedger(board) {
       if (l.t === 'test') {
         if (!fs.existsSync(rel(l.file))) { problems.push(`${where}:测试文件不存在 ${l.file}`); continue; }
         const src = fs.readFileSync(rel(l.file), 'utf8');
-        const names = [...src.matchAll(/^\s*test\('([^']+)'/gm)].map((m) => m[1]);
+        const names = [...src.matchAll(/^\s*test\((['"`])(.+?)\1/gm)].map((m) => m[2]);
         if (!names.some((n) => n.includes(l.name))) problems.push(`${where}:${l.file} 里找不到测试"${l.name}"`);
       }
       if (l.t === 'doc' && !fs.existsSync(rel(l.file))) problems.push(`${where}:文档不存在 ${l.file}`);
